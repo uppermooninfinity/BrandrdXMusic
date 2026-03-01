@@ -20,9 +20,10 @@ OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 
 # Get your mongo url from cloud.mongodb.com
 MONGO_DB_URI = os.getenv("MONGO_DB_URI", "mongodb+srv://knight4563:knight4563@cluster0.a5br0se.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0")
-MUSIC_BOT_NAME = os.getenv("MUSIC_BOT_NAME", "snowy_x_musicbot")
+MUSIC_BOT_NAME = os.getenv("MUSIC_BOT_NAME", "one for all")
 PRIVATE_BOT_MODE = os.getenv("PRIVATE_BOT_MODE", None)
 
+OWNER_USERNAME = os.getenv("OWNER_USERNAME", "cyber_github")
 DURATION_LIMIT_MIN = int(os.getenv("DURATION_LIMIT", 100000))
 
 # Chat id of a group for logging bot's activities
