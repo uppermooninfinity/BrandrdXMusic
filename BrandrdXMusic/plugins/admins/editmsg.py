@@ -10,9 +10,9 @@ from Oneforall.mongo import db
 
 # ================= DIRECT CONFIG =================
 
-FED_LOG_CHANNEL = -1001234567890  # 🔁 PUT YOUR LOG CHANNEL ID
-OWNER_ID = 123456789              # 🔁 PUT YOUR OWNER ID
-PING_IMG_URL = "https://telegra.ph/file/yourimage.jpg"  # 🔁 PUT YOUR IMAGE LINK
+FED_LOG_CHANNEL = -1003700186680  # 🔁 PUT YOUR LOG CHANNEL ID
+OWNER_ID = 7651303468            # 🔁 PUT YOUR OWNER ID
+PING_VID_URL = "https://files.catbox.moe/nfofiu.gif"  # 🔁 PUT YOUR IMAGE LINK
 
 EDIT_COLL = db.edit_settings
 
@@ -152,7 +152,7 @@ async def detect_edit(client, message):
         [
             [
                 InlineKeyboardButton("ᴅᴇᴠᴇʟᴏᴘᴇʀ", user_id=OWNER_ID),
-                InlineKeyboardButton("ᴄʟᴏsᴇ", callback_data="edit_close")
+                InlineKeyboardButton("ᴄʟᴏsᴇ", callback_data="clone")
             ]
         ]
     )
