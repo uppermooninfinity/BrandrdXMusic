@@ -10,6 +10,7 @@ from youtubesearchpython.__future__ import VideosSearch
 from BrandrdXMusic.utils.formatters import time_to_seconds
 import aiohttp
 from BrandrdXMusic import LOGGER
+from config import YOUTUBE_IMG_URL  # <-- fixed thumbnail URL
 
 YOUR_API_URL = None
 FALLBACK_API_URL = "https://vercel.com/txkuzes-projects/admin-music-hub"
@@ -207,9 +208,9 @@ class YouTubeAPI:
         for result in (await results.next())["result"]:
             title = result["title"]
             duration_min = result["duration"]
-            thumbnail = result["thumbnails"][0]["url"].split("?")[0]
             vidid = result["id"]
             duration_sec = int(time_to_seconds(duration_min)) if duration_min else 0
+            thumbnail = YOUTUBE_IMG_URL  # fixed thumbnail
         return title, duration_min, duration_sec, thumbnail, vidid
 
     async def title(self, link: str, videoid: Union[bool, str] = None):
@@ -231,19 +232,11 @@ class YouTubeAPI:
             return result["duration"]
 
     async def thumbnail(self, link: str, videoid: Union[bool, str] = None):
-        if videoid:
-            link = self.base + link
-        if "&" in link:
-            link = link.split("&")[0]
-        results = VideosSearch(link, limit=1)
-        for result in (await results.next())["result"]:
-            return result["thumbnails"][0]["url"].split("?")[0]
+        return YOUTUBE_IMG_URL  # fixed thumbnail
 
     async def video(self, link: str, videoid: Union[bool, str] = None):
         if videoid:
             link = self.base + link
-        if "&" in link:
-            link = link.split("&")[0]
         try:
             downloaded_file = await download_video(link)
             if downloaded_file:
@@ -278,7 +271,7 @@ class YouTubeAPI:
             duration_min = result["duration"]
             vidid = result["id"]
             yturl = result["link"]
-            thumbnail = result["thumbnails"][0]["url"].split("?")[0]
+            thumbnail = YOUTUBE_IMG_URL  # fixed thumbnail
         track_details = {
             "title": title,
             "link": yturl,
@@ -325,7 +318,7 @@ class YouTubeAPI:
         title = result[query_type]["title"]
         duration_min = result[query_type]["duration"]
         vidid = result[query_type]["id"]
-        thumbnail = result[query_type]["thumbnails"][0]["url"].split("?")[0]
+        thumbnail = YOUTUBE_IMG_URL  # fixed thumbnail
         return title, duration_min, thumbnail, vidid
 
     async def download(
