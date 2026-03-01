@@ -130,23 +130,7 @@ async def start_pm(client, message: Message, _):
             )
 
 
-# ==============================
-# FORCE JOIN CALLBACK
-# ==============================
-
-@app.on_callback_query(filters.regex("check_sub"))
-async def check_subscription(client, callback_query: CallbackQuery):
-
-    user_id = callback_query.from_user.id
-
-    member1 = await app.get_chat_member(f"@{FORCE_CHANNEL_1}", user_id)
-    member2 = await app.get_chat_member(f"@{FORCE_CHANNEL_2}", user_id)
-
-    if member1.status not in ["left", "kicked"] and member2.status not in ["left", "kicked"]:
-        await callback_query.message.delete()
-        await callback_query.message.reply_text("✅ Subscription Verified!\n\nNow send /start again.")
-    else:
-        await callback_query.answer("❌ You have not joined both channels!", show_alert=True)
+# ====
 
 
 # ==============================
