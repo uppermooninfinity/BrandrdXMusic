@@ -42,7 +42,7 @@ async def helper_private(
         _ = get_string(language)
         keyboard = help_pannel(_)
 
-        await update.reply_video(
+        await message.reply_video(
             video="https://files.catbox.moe/mbugb9.mp4",
             caption=_["help_1"].format(SUPPORT_CHAT),
             reply_markup=keyboard,
