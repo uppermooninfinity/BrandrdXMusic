@@ -38,7 +38,6 @@ from BrandrdXMusic.utils.inline.settings import (
 from BrandrdXMusic.utils.inline.start import private_panel
 from config import BANNED_USERS, OWNER_ID, MUSIC_BOT_NAME, START_IMG_URL
 
-
 @app.on_message(
     filters.command(["settings", "setting"]) & filters.group & ~BANNED_USERS
 )
@@ -50,15 +49,6 @@ async def settings_mar(client, message: Message, _):
         reply_markup=InlineKeyboardMarkup(buttons),
     )
 
-@app.on_callback_query(filters.regex("gib_source") & ~BANNED_USERS)
-@languageCB
-async def gib_repo(client, CallbackQuery, _):
-    await CallbackQuery.edit_message_media(
-        InputMediaVideo("https://te.legra.ph/file/ef47f077b671f69f8d8f0.mp4"),
-        reply_markup=InlineKeyboardMarkup(
-            [[InlineKeyboardButton(text="ʙᴀᴄᴋ", callback_data=f"settingsback_helper")]]
-        ),
-    )
 
 @app.on_callback_query(
     filters.regex("settings_helper") & ~BANNED_USERS
@@ -103,6 +93,26 @@ async def settings_back_markup(client, CallbackQuery: CallbackQuery, _):
         return await CallbackQuery.edit_message_reply_markup(
             reply_markup=InlineKeyboardMarkup(buttons)
         )
+
+
+@app.on_callback_query(filters.regex("^bot_info_data$"))
+async def show_bot_info(c: app, q: CallbackQuery):
+    start = time()
+    x = await c.send_message(q.message.chat.id, "ᴘɪɴɢ ᴘᴏɴɢ 💕..")
+    delta_ping = time() - start
+    await x.delete()
+    txt = f"""💌 ᴘɪɴɢ ᴘᴏɴɢ ʙᴀʙʏ...
+
+• ᴅᴀᴛᴀʙᴀsᴇ: ᴏɴʟɪɴᴇ
+• ʏᴏᴜᴛᴜʙᴇ ᴀᴘɪ: ʀᴇsᴘᴏɴsɪᴠᴇ
+• ʙᴏᴛ sᴇʀᴠᴇʀ: ʀᴜɴɴɪɴɢ sᴍᴏᴏᴛʜʟʏ
+• ʀᴇsᴘᴏɴsᴇ ᴛɪᴍᴇ: ᴏᴘᴛɪᴍᴀʟ
+• ᴀᴘɪ ᴘɪɴɢ: {delta_ping * 1000:.3f} ms   
+
+• ᴇᴠᴇʀʏᴛʜɪɴɢ ʟᴏᴏᴋs ɢᴏᴏᴅ!
+"""
+    await q.answer(txt, show_alert=True)
+    return
 
 
 @app.on_callback_query(
@@ -405,3 +415,4 @@ async def vote_change(client, CallbackQuery, _):
         )
     except MessageNotModified:
         return
+
