@@ -5,8 +5,8 @@ from pyrogram import filters
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.enums import ParseMode
 
-from Oneforall import app
-from Oneforall.mongo import db
+from BrandrdXMusic import app
+from BrandrdXMusic.mongo import db
 
 # ================= DIRECT CONFIG =================
 
