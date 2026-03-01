@@ -66,7 +66,7 @@ async def editmsg_panel(client, message):
         ]
     )
 
-    await app.send_photo(
+    await app.send_video(
         chat_id=message.chat.id,
         video=PING_VID_URL,
         caption=text,
@@ -157,7 +157,7 @@ async def detect_edit(client, message):
         ]
     )
 
-    warn_msg = await app.send_photo(
+    warn_msg = await app.send_video(
         chat_id=chat_id,
         video=PING_VID_URL,
         caption=group_text,
