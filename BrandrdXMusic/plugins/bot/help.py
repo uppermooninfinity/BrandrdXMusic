@@ -4,13 +4,13 @@ from pyrogram import filters, types
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 
 from config import BANNED_USERS, SUPPORT_CHAT
-from Oneforall import app
-from Oneforall.utils import help_pannel
-from Oneforall.utils.database import get_lang
-from Oneforall.utils.decorators.language import LanguageStart, languageCB
-from Oneforall.utils.inline.help import help_back_markup, private_help_panel
-from Oneforall.utils.stuffs.buttons import BUTTONS
-from Oneforall.utils.stuffs.helper import Helper
+from BrandrdXMusic import app
+from BrandrdXMusic.utils import help_pannel
+from BrandrdXMusic.utils.database import get_lang
+from BrandrdXMusic.utils.decorators.language import LanguageStart, languageCB
+from BrandrdXMusic.utils.inline.help import help_back_markup, private_help_panel
+from BrandrdXMusic.utils.stuffs.buttons import BUTTONS
+from BrandrdXMusic.utils.stuffs.helper import Helper
 from strings import get_string, helpers
 
 
