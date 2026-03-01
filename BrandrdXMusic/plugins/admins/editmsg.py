@@ -6,7 +6,7 @@ from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.enums import ParseMode
 
 from BrandrdXMusic import app
-from BrandrdXMusic.mongo import db
+from BrandrdXMusic.utils.mongo import db
 
 # ================= DIRECT CONFIG =================
 
