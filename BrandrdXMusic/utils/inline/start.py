@@ -30,8 +30,8 @@ def private_panel(_):
         ],
         [
             InlineKeyboardButton(
-                text=_["S_B_5"],
-                url=config.OWNER_USERNAME
+                text="˹ ɪɴꜰɪɴɪᴛʏ ˼",
+                url="https://t.me/cyber_github"
             ),
             InlineKeyboardButton(text="💌 ʏᴛ-ᴀᴘɪ", callback_data="bot_info_data"),
             InlineKeyboardButton(
