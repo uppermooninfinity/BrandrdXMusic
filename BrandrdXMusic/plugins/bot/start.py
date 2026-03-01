@@ -108,7 +108,7 @@ async def start_pm(client, message: Message, _):
             await m.delete()
             await app.send_photo(
                 chat_id=message.chat.id,
-                photo=thumbnail,
+                photo=config.YOUTUBE_IMG_URL,
                 caption=searched_text,
                 reply_markup=key,
             )
@@ -119,10 +119,11 @@ async def start_pm(client, message: Message, _):
                 )
     else:
         out = private_panel(_)
-        await message.reply(
-        f"{text}\n\n<a href='{START_VID_URL}'>๏ ʟᴇᴛ'ꜱ ʙᴇɢɪɴ ᴛʜᴇ ʜᴜɴᴛ! 🐺</a>",
-        reply_markup=keyboard
-)
+        await message.reply_video(
+            video=config.START_VID_URL,
+            caption=_["start_2"].format(message.from_user.mention, app.mention),
+            reply_markup=InlineKeyboardMarkup(out),
+        )
         if await is_on_off(2):
             return await app.send_message(
                 chat_id=config.LOGGER_ID,
