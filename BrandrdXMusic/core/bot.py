@@ -25,16 +25,28 @@ class Hotty(Client):
         self.username = self.me.username
         self.mention = self.me.mention
 
+        # Replace this with your actual catbox video link
+        video_url = "https://files.catbox.moe/nfofiu.gif"
+
+        caption_text = (
+            f"❖ ʜᴇʟʟᴏ ᴅᴇᴀʀs! ʙᴏᴛ ɪs ɴᴏᴡ ᴏɴʟɪɴᴇ 🎶\n\n"
+            f"» ɪᴅ : <code>{self.id}</code>\n"
+            f"» ɴᴀᴍᴇ : {self.name}\n"
+            f"» ᴜsᴇʀɴᴀᴍᴇ : @{self.username}\n\n"
+            "❍ ˹ ɪɴꜰɪɴɪᴛʏ ✘ ɴᴇᴛᴡᴏʀᴋ˼ 🎧"
+        )
+
         try:
-            await self.send_message(
+            await self.send_video(
                 chat_id=config.LOGGER_ID,
-                text=f"<blockquote><u><b>» {self.mention} ʙᴏᴛ sᴛᴀʀᴛᴇᴅ :</b><u>\n\nɪᴅ : <code>{self.id}</code>\nɴᴀᴍᴇ : {self.name}\nᴜsᴇʀɴᴀᴍᴇ : @{self.username}\n ❍ ˹ ɪɴꜰɪɴɪᴛʏ ✘ ɴᴇᴛᴡᴏʀᴋ˼ 🎧</blockquote>",
+                video=video_url,
+                caption=caption_text,
+                parse_mode=ParseMode.HTML
             )
         except (errors.ChannelInvalid, errors.PeerIdInvalid):
             LOGGER(__name__).error(
                 "Bot has failed to access the log group/channel. Make sure that you have added your bot to your log group/channel."
             )
-
         except Exception as ex:
             LOGGER(__name__).error(
                 f"Bot has failed to access the log group/channel.\n  Reason : {type(ex).__name__}."
