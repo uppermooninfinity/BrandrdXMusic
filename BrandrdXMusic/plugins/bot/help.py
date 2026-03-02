@@ -2,7 +2,6 @@ from typing import Union
 
 from pyrogram import filters, types
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
-from pyrogram.types import CallbackQuery
 
 from config import BANNED_USERS, SUPPORT_CHAT
 from BrandrdXMusic import app
@@ -42,8 +41,8 @@ async def helper_private(
         _ = get_string(language)
         keyboard = help_pannel(_)
 
-        await Message.reply_video(
-            video="https://files.catbox.moe/mbugb9.mp4",
+        await update.reply_video(
+            video="https://files.catbox.moe/ix1sik.mp4",
             caption=_["help_1"].format(SUPPORT_CHAT),
             reply_markup=keyboard,
         )
@@ -53,8 +52,8 @@ async def helper_private(
 @LanguageStart
 async def help_com_group(client, message: Message, _):
     keyboard = private_help_panel(_)
-    await message.reply_video(
-    video="https://files.catbox.moe/mbugb9.mp4",
+    await message.reply_photo(
+    photo=config.HELP_IMG_URL,
     caption=(
         "❖ ʜᴇʟᴘ ᴍᴀɪɴ ᴍᴇɴᴜ ❖\n\n"
         "✦ ᴄʜσσsє ᴛʜє ᴄᴧᴛєɢσʀʏ ꜰσʀ ᴡʜɪᴄʜ ʏσᴜ ᴡᴧηηᴧ ɢєᴛ ʜєʟᴘ 🎀✨"
@@ -187,4 +186,4 @@ async def mb_plugin_button(client, CallbackQuery):
     else:
         await CallbackQuery.edit_message_text(
             getattr(Helper, cb), reply_markup=keyboard
-    )
+        )
