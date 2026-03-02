@@ -9,3 +9,4 @@ from .playlist import *
 from .videochat import*
 from .fun import*
 from .management import*
+from .sudoerspanel import*
