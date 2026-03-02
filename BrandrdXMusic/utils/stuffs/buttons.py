@@ -21,7 +21,7 @@ class BUTTONS(object):
         [
             InlineKeyboardButton("•ғᴏɴᴛ•", callback_data="mplus HELP_Font"),
             InlineKeyboardButton("•Bᴏᴛs•", callback_data="mplus HELP_Bots"),
-            InlineKeyboardButton("•Ⓣ-ɢʀᴀᴘʜ•", callback_data="mplus HELP_TG"),
+            InlineKeyboardButton("•ᴄᴀᴛʙᴏx•", callback_data="mplus HELP_TG"),
         ],
         [
             InlineKeyboardButton("•ғᴇᴅᴇʀᴀᴛɪᴏɴ•", callback_data="mplus HELP_Source"),
