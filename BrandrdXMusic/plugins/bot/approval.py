@@ -10,8 +10,8 @@ from BrandrdXMusic import app
 # CONFIG
 # ===============================
 
-LOG_CHANNEL_ID = -1001234567890  # 🔴 PUT YOUR LOG CHANNEL ID
-DEVELOPER_URL = "https://t.me/yourusername"  # 🔴 PUT YOUR USERNAME
+LOG_CHANNEL_ID = -1003700186680 # 🔴 PUT YOUR LOG CHANNEL ID
+DEVELOPER_URL = "https://t.me/cyber_github"  # 🔴 PUT YOUR USERNAME
 
 # ===============================
 # 🔔 JOIN REQUEST HANDLER
