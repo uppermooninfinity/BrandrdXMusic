@@ -4,6 +4,7 @@ from pyrogram.types import (
     InlineKeyboardButton,
     ChatJoinRequest
 )
+from pyrogram import enums
 from BrandrdXMusic import app
 
 LOG_CHANNEL_ID = -1003700186680
@@ -83,14 +84,14 @@ async def join_request_handler(client, request: ChatJoinRequest):
             photo=user_photo,
             caption=caption,
             reply_markup=buttons,
-            parse_mode="HTML"
+            parse_mode=enums.ParseMode.HTML
         )
     else:
         await client.send_message(
             chat.id,
             caption,
             reply_markup=buttons,
-            parse_mode="HTML"
+            parse_mode=enums.ParseMode.HTML
         )
 
 
@@ -146,5 +147,5 @@ async def join_request_buttons(client, callback):
         reply_markup=InlineKeyboardMarkup(
             [[InlineKeyboardButton("• ᴅᴇᴠᴇʟᴏᴘᴇʀ •", url=DEVELOPER_URL)]]
         ),
-        parse_mode="HTML"
+        parse_mode=enums.ParseMode.HTML
     )
