@@ -8,7 +8,7 @@ from pyrogram.types import (
 )
 from pyrogram.enums import ChatMemberStatus
 
-from yourbot import app  # change this
+from BrandrdXMusic import app  # change this
 from BrandrdXMusic.mongo.report_db import get_settings
 
 
