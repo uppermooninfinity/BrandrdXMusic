@@ -29,7 +29,7 @@ userdb = mongodb.userstats
 videodb = mongodb.vipvideocalls
 chatsdbc = mongodb.chatsc  # for clone
 usersdbc = mongodb.tgusersdbc  # for clone
-
+profiledb = mongodb.user_profiles
 # Shifting to memory [mongo sucks often]
 active = []
 activevideo = []
@@ -980,3 +980,4 @@ async def add_served_chat_clone(chat_id: int):
 
 async def delete_served_chat_clone(chat_id: int):
     await chatsdbc.delete_one({"chat_id": chat_id})
+
