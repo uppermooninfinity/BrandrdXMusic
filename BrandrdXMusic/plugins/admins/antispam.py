@@ -7,11 +7,14 @@ from pyrogram.types import (
     InlineKeyboardButton,
     CallbackQuery
 )
-from pyrogram.enums import ChatMemberStatus
+from pyrogram.enums import ChatMemberStatus, ChatPermissions
 
 from BrandrdXMusic import app
 
-# ================= SETTINGS ================= #
+# ================= CONFIG ================= #
+
+SETUP_VIDEO = "https://files.catbox.moe/yvhhae.mp4"
+SPAM_CAUGHT_VIDEO = "https://files.catbox.moe/58pvgg.mp4"
 
 DEVELOPER_URL = "https://t.me/cyber_github"
 SPAM_LIMIT = 5
@@ -19,7 +22,7 @@ SPAM_LIMIT = 5
 chat_settings = {}
 user_messages = defaultdict(list)
 
-# ============================================ #
+# ========================================== #
 
 def sc(text: str):
     return text.lower()
@@ -31,29 +34,43 @@ async def is_admin(chat_id: int, user_id: int):
         ChatMemberStatus.ADMINISTRATOR
     )
 
-# ================= COMMAND =================== #
+# ================= COMMAND ================= #
 
 @app.on_message(filters.command("antispam", prefixes=["/"]) & filters.group)
 async def antispam_panel(_, message: Message):
 
     if not await is_admin(message.chat.id, message.from_user.id):
-        return await message.reply(sc("only chat admins can use this 🚫🔥"))
+        return await message.reply(sc("only admins can use this 🚫🔥"))
 
     buttons = InlineKeyboardMarkup([
-        [InlineKeyboardButton("⏱ ᴛɪᴍᴇ", callback_data="spam_time")],
-        [InlineKeyboardButton("❌ ᴏғғ", callback_data="spam_off")],
-        [InlineKeyboardButton("❌ ᴄʟᴏsᴇ", callback_data="close")]
+        [InlineKeyboardButton("⏱ set time", callback_data="spam_time")],
+        [
+            InlineKeyboardButton("🗑 delete", callback_data="act_delete"),
+            InlineKeyboardButton("⚠️ warn", callback_data="act_warn"),
+        ],
+        [
+            InlineKeyboardButton("🔇 mute", callback_data="act_mute"),
+            InlineKeyboardButton("👢 kick", callback_data="act_kick"),
+        ],
+        [
+            InlineKeyboardButton("🚫 ban", callback_data="act_ban"),
+        ],
+        [InlineKeyboardButton("❌ close", callback_data="close")]
     ])
 
-    await message.reply(
-        sc("⚔️ antispam control panel 🔥"),
+    await message.reply_video(
+        SETUP_VIDEO,
+        caption=sc(
+            "⚔️ antispam setup panel 🔥\n\n"
+            "“spam is temporary, admin power is permanent.” 😈"
+        ),
         reply_markup=buttons
     )
 
 # ================= TIME SELECT ================= #
 
 @app.on_callback_query(filters.regex("^spam_time$"))
-async def time_selector(_, query: CallbackQuery):
+async def select_time(_, query: CallbackQuery):
 
     if not await is_admin(query.message.chat.id, query.from_user.id):
         return await query.answer("admins only 🚫", show_alert=True)
@@ -68,7 +85,7 @@ async def time_selector(_, query: CallbackQuery):
         [InlineKeyboardButton("❌ close", callback_data="close")]
     ])
 
-    await query.message.edit_text(
+    await query.message.edit_caption(
         sc("⏱ select time interval 🔥"),
         reply_markup=buttons
     )
@@ -82,45 +99,31 @@ async def set_time(_, query: CallbackQuery):
         return await query.answer("admins only 🚫", show_alert=True)
 
     seconds = int(query.data.split("_")[1])
-    chat_settings[query.message.chat.id] = seconds
+    chat_settings.setdefault(query.message.chat.id, {})
+    chat_settings[query.message.chat.id]["time"] = seconds
 
-    await query.message.edit_text(
-        sc(
-            f"🔥 antispam active\n\n"
-            f"📨 limit: {SPAM_LIMIT} messages\n"
-            f"⏱ time: {seconds}s"
-        )
-    )
+    await query.answer("time set ✅")
 
-# ================= TURN OFF ================= #
+# ================= SET ACTION ================= #
 
-@app.on_callback_query(filters.regex("^spam_off$"))
-async def spam_off(_, query: CallbackQuery):
+@app.on_callback_query(filters.regex("^act_"))
+async def set_action(_, query: CallbackQuery):
 
     if not await is_admin(query.message.chat.id, query.from_user.id):
         return await query.answer("admins only 🚫", show_alert=True)
 
-    chat_settings.pop(query.message.chat.id, None)
-    await query.message.edit_text(sc("❌ antispam disabled"))
+    action = query.data.split("_")[1]
+
+    chat_settings.setdefault(query.message.chat.id, {})
+    chat_settings[query.message.chat.id]["action"] = action
+
+    await query.answer(f"action set: {action} ✅")
 
 # ================= CLOSE ================= #
 
 @app.on_callback_query(filters.regex("^close$"))
 async def close_btn(_, query: CallbackQuery):
     await query.message.delete()
-
-# ================= BAN BUTTON ================= #
-
-@app.on_callback_query(filters.regex("^ban_"))
-async def ban_user(_, query: CallbackQuery):
-
-    if not await is_admin(query.message.chat.id, query.from_user.id):
-        return await query.answer("admins only 🚫", show_alert=True)
-
-    user_id = int(query.data.split("_")[1])
-    await app.ban_chat_member(query.message.chat.id, user_id)
-
-    await query.message.edit_text(sc("🚫 user banned ⚔️"))
 
 # ================= SPAM DETECTOR ================= #
 
@@ -132,12 +135,18 @@ async def detect_spam(_, message: Message):
     if chat_id not in chat_settings:
         return
 
+    settings = chat_settings[chat_id]
+
+    if "time" not in settings or "action" not in settings:
+        return
+
     if not message.from_user:
         return
 
     user_id = message.from_user.id
     now = time.time()
-    interval = chat_settings[chat_id]
+    interval = settings["time"]
+    action = settings["action"]
 
     user_messages[(chat_id, user_id)] = [
         t for t in user_messages[(chat_id, user_id)]
@@ -153,21 +162,39 @@ async def detect_spam(_, message: Message):
         except:
             pass
 
-        buttons = InlineKeyboardMarkup([
-            [InlineKeyboardButton("🚫 ʙᴀɴ", callback_data=f"ban_{user_id}")],
-            [InlineKeyboardButton("👨‍💻 ᴅᴇᴠᴇʟᴏᴘᴇʀ", url=DEVELOPER_URL)],
-            [InlineKeyboardButton("❌ ᴄʟᴏsᴇ", callback_data="close")]
-        ])
+        # ===== ACTIONS ===== #
 
-        await app.send_message(
+        if action == "mute":
+            await app.restrict_chat_member(
+                chat_id,
+                user_id,
+                ChatPermissions()
+            )
+
+        elif action == "kick":
+            await app.ban_chat_member(chat_id, user_id)
+            await app.unban_chat_member(chat_id, user_id)
+
+        elif action == "ban":
+            await app.ban_chat_member(chat_id, user_id)
+
+        elif action == "warn":
+            pass  # only warning message
+
+        # delete action already handled
+
+        # ===== ALERT MESSAGE ===== #
+
+        await app.send_video(
             chat_id,
-            sc(
+            SPAM_CAUGHT_VIDEO,
+            caption=sc(
                 f"⚠️ spam detected 🔥\n\n"
                 f"👤 {message.from_user.mention}\n"
-                f"📨 {SPAM_LIMIT} messages in {interval}s\n\n"
-                f"@admins please overlook ⚔️"
-            ),
-            reply_markup=buttons
+                f"📨 {SPAM_LIMIT} messages in {interval}s\n"
+                f"⚔️ action taken: {action}\n\n"
+                "“rules are rules.” 😎"
+            )
         )
 
         user_messages[(chat_id, user_id)] = []
