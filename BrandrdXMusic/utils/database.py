@@ -849,7 +849,19 @@ async def suggestion_off(chat_id: int):
     if not user:
         return await suggdb.insert_one({"chat_id": chat_id})
 
+#sangmata ki jay 
 
+async def get_profile(user_id: int):
+    return await profiledb.find_one({"_id": user_id})
+
+
+async def save_profile(user_id: int, data: dict):
+    await profiledb.update_one(
+        {"_id": user_id},
+        {"$set": data},
+        upsert=True
+    )
+    
 # Clean Mode
 async def is_cleanmode_on(chat_id: int) -> bool:
     if chat_id not in cleanmode:
@@ -980,4 +992,5 @@ async def add_served_chat_clone(chat_id: int):
 
 async def delete_served_chat_clone(chat_id: int):
     await chatsdbc.delete_one({"chat_id": chat_id})
+
 
