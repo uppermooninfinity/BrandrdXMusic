@@ -4,7 +4,7 @@ from pyrogram import filters
 from pyrogram.types import CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram.enums import ChatMemberStatus
 
-from yourbot import app  # change this
+from BrandrdXMusic import app  # change this
 from BrandrdXMusic.mongo.report_db import (
     get_settings,
     update_setting,
