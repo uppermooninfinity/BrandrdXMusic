@@ -7,6 +7,7 @@ from pyrogram.types import (
     InlineKeyboardButton,
     CallbackQuery
 )
+from pyrogram.enums import ChatMemberStatus
 
 from BrandrdXMusic import app
 
@@ -25,16 +26,10 @@ def sc(text: str):
 
 async def is_admin(chat_id: int, user_id: int):
     member = await app.get_chat_member(chat_id, user_id)
-
-    # Owner
-    if member.status == "creator":
-        return True
-
-    # Admin with privileges
-    if member.privileges:
-        return True
-
-    return False
+    return member.status in (
+        ChatMemberStatus.OWNER,
+        ChatMemberStatus.ADMINISTRATOR
+    )
 
 # ================= COMMAND =================== #
 
