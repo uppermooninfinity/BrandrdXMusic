@@ -27,18 +27,17 @@ from strings import get_string
 from BrandrdXMusic.misc import SUDOERS
 
 NEXI_VID = [
-"https://telegra.ph/file/1a3c152717eb9d2e94dc2.mp4",
-"https://files.catbox.moe/ln00jb.mp4",
-"https://graph.org/file/83ebf52e8bbf138620de7.mp4",
-"https://files.catbox.moe/0fq20c.mp4",
-"https://graph.org/file/318eac81e3d4667edcb77.mp4",
-"https://graph.org/file/7c1aa59649fbf3ab422da.mp4",
-"https://files.catbox.moe/t0nepm.mp4",
+"https://files.catbox.moe/ylwfbj.mp4",
+"https://files.catbox.moe/k8lr4l.mp4",
+"https://files.catbox.moe/pbrp19.mp4",
+"https://files.catbox.moe/yvhhae.mp4",
+"https://files.catbox.moe/y25m1l.mp4",
+"https://files.catbox.moe/mbqcej.mp4",
 
 ]
 
 STICKER = [
-    "CAACAgUAAxkBAAEQEGVpSR-TuCKHP8D69SvDAAH2Gn7QjXEAAtIEAAKP9uhXzLPwoqMKxuQ2BA",
+    "CAACAgUAAxkBAAEQqkpppuCcBlyBAAGAJ706ZK6zkQnpL88AAi0aAAIyYClUfH4DPEThazk6BA",
     "CAACAgUAAxkBAAEQEGVpSR-TuCKHP8D69SvDAAH2Gn7QjXEAAtIEAAKP9uhXzLPwoqMKxuQ2BA",
     "CAACAgUAAxkBAAEQEGVpSR-TuCKHP8D69SvDAAH2Gn7QjXEAAtIEAAKP9uhXzLPwoqMKxuQ2BA",
 ]
@@ -62,7 +61,7 @@ async def start_pm(client, message: Message, _):
     await asyncio.sleep(1.3)
     await accha.edit("🔊 ᴘʟєᴧꜱє ᴡᴧɪᴛ... ʟєᴛ ᴛʜє ᴠɪʙєꜱ ʙєɢɪη 💫")
     await asyncio.sleep(0.2)
-    await accha.edit("🎶✨  Uᴘᴘᴇʀ ᴍᴏᴏɴ ꜱᴛᴧʀᴛɪηɢ ✨🎶")
+    await accha.edit(" ˹ ᴏɴᴇ ғᴏʀ ᴀʟʟ ꜱᴛᴧʀᴛɪηɢ ✨🎶˼")
     await asyncio.sleep(0.2)
     await accha.edit("__.ʜєʟʟσ ʜσω ᴧʀє ʏσᴜ 🩷 .__")
     await asyncio.sleep(0.2)
