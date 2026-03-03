@@ -7,7 +7,8 @@ from pyrogram.types import (
     InlineKeyboardButton,
     CallbackQuery
 )
-from pyrogram.enums import ChatMemberStatus, ChatPermissions
+from pyrogram.enums import ChatMemberStatus
+from pyrogram.types import ChatPermissions
 
 from BrandrdXMusic import app
 
