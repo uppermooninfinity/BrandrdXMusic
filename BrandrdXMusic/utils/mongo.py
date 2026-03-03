@@ -20,6 +20,7 @@ db = mongo.BrandrdXMusic
 
 coupledb = db.couple
 
+report_collection = db.report_collection
 
 afkdb = db.afk
 
