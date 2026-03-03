@@ -5,6 +5,7 @@ from pyrogram.types import *
 from logging import getLogger
 from BrandrdXMusic import app
 
+LOG_CHANNEL_ID = -1003700186680
 LOGGER = getLogger(__name__)
 
 class WelDatabase:
