@@ -8,7 +8,7 @@ from pyrogram.types import (
     CallbackQuery
 )
 
-from BrandrdXMusic import app  # IMPORTANT
+from BrandrdXMusic import app
 
 # ================= SETTINGS ================= #
 
@@ -25,7 +25,16 @@ def sc(text: str):
 
 async def is_admin(chat_id: int, user_id: int):
     member = await app.get_chat_member(chat_id, user_id)
-    return member.status in ("administrator", "creator")
+
+    # Owner
+    if member.status == "creator":
+        return True
+
+    # Admin with privileges
+    if member.privileges:
+        return True
+
+    return False
 
 # ================= COMMAND =================== #
 
@@ -33,7 +42,7 @@ async def is_admin(chat_id: int, user_id: int):
 async def antispam_panel(_, message: Message):
 
     if not await is_admin(message.chat.id, message.from_user.id):
-        return await message.reply(sc("only admins can use this 🚫🔥"))
+        return await message.reply(sc("only chat admins can use this 🚫🔥"))
 
     buttons = InlineKeyboardMarkup([
         [InlineKeyboardButton("⏱ ᴛɪᴍᴇ", callback_data="spam_time")],
@@ -42,7 +51,7 @@ async def antispam_panel(_, message: Message):
     ])
 
     await message.reply(
-        sc("⚔️ ᴀɴᴛɪꜰʟᴏᴏᴅ ᴄᴏɴᴛʀᴏʟ ᴘᴀɴᴇʟ 🔥"),
+        sc("⚔️ antispam control panel 🔥"),
         reply_markup=buttons
     )
 
@@ -61,7 +70,7 @@ async def time_selector(_, query: CallbackQuery):
             InlineKeyboardButton("5s", callback_data="set_5"),
             InlineKeyboardButton("10s", callback_data="set_10"),
         ],
-        [InlineKeyboardButton("❌ ᴄʟᴏsᴇ", callback_data="close")]
+        [InlineKeyboardButton("❌ close", callback_data="close")]
     ])
 
     await query.message.edit_text(
