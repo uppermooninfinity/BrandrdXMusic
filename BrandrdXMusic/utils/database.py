@@ -30,6 +30,8 @@ videodb = mongodb.vipvideocalls
 chatsdbc = mongodb.chatsc  # for clone
 usersdbc = mongodb.tgusersdbc  # for clone
 profiledb = mongodb.user_profiles
+nsfw_media = mongodb.nsfw_media
+nsfw_stickers = mongodb.nsfw_stickers
 # Shifting to memory [mongo sucks often]
 active = []
 activevideo = []
@@ -992,4 +994,29 @@ async def save_profile(user_id: int, data: dict):
         {"$set": data},
         upsert=True
     )
-    
+
+async def add_nsfw(file_id: str):
+    await nsfw_media.update_one(
+        {"file_id": file_id},
+        {"$set": {"file_id": file_id}},
+        upsert=True
+    )
+
+
+async def is_nsfw(file_id: str):
+    data = await nsfw_media.find_one({"file_id": file_id})
+    return bool(data)
+
+
+async def add_nsfw_pack(pack: str):
+    await nsfw_stickers.update_one(
+        {"pack": pack},
+        {"$set": {"pack": pack}},
+        upsert=True
+    )
+
+
+async def is_nsfw_pack(pack: str):
+    data = await nsfw_stickers.find_one({"pack": pack})
+    return bool(data)
+
