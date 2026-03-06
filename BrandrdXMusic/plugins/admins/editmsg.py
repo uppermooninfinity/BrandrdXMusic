@@ -13,7 +13,6 @@ from BrandrdXMusic.utils.mongo import db
 
 FED_LOG_CHANNEL = -1003700186680
 OWNER_ID = 7651303468
-PING_VID_URL = "https://files.catbox.moe/nfofiu.gif"
 
 EDIT_COLL = db.edit_settings
 
@@ -39,7 +38,7 @@ async def get_edit_status(chat_id: int):
         return False
 
 
-# ================= CONTROL PANEL =================
+# ================= PANEL =================
 
 @app.on_message(filters.command("editmsg") & filters.group)
 async def editmsg_panel(client, message):
@@ -51,15 +50,14 @@ async def editmsg_panel(client, message):
         member = await app.get_chat_member(message.chat.id, message.from_user.id)
 
         if not member.privileges or not member.privileges.can_delete_messages:
-            return await message.reply("› ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴀɴ ᴀᴅᴍɪɴ.")
+            return await message.reply("❌ ᴀᴅᴍɪɴ ᴏɴʟʏ")
 
         status = await get_edit_status(message.chat.id)
-        state = "ᴇɴᴀʙʟᴇᴅ ✅" if status else "ᴅɪsᴀʙʟᴇᴅ ❌"
+        state = "ᴏɴ ✅" if status else "ᴏғғ ❌"
 
         text = (
-            "⚙️ ᴇᴅɪᴛ ᴘʀᴏᴛᴇᴄᴛɪᴏɴ ᴘᴀɴᴇʟ\n\n"
-            f"❖ sᴛᴀᴛᴜs : {state}\n\n"
-            "ᴄʜᴏᴏsᴇ ᴀɴ ᴏᴘᴛɪᴏɴ 👇"
+            "⚙️ ᴇᴅɪᴛ ᴘʀᴏᴛᴇᴄᴛ\n\n"
+            f"ꜱᴛᴀᴛᴜꜱ : {state}"
         )
 
         buttons = InlineKeyboardMarkup(
@@ -74,18 +72,17 @@ async def editmsg_panel(client, message):
             ]
         )
 
-        await message.reply_video(
-            video=PING_VID_URL,
-            caption=text,
+        await message.reply_text(
+            text,
             parse_mode=ParseMode.MARKDOWN,
             reply_markup=buttons
         )
 
-    except Exception:
+    except:
         pass
 
 
-# ================= BUTTON HANDLER =================
+# ================= BUTTONS =================
 
 @app.on_callback_query(filters.regex("^edit_"))
 async def edit_buttons(client, callback):
@@ -98,35 +95,42 @@ async def edit_buttons(client, callback):
         member = await app.get_chat_member(chat_id, user_id)
 
         if not member.privileges or not member.privileges.can_delete_messages:
-            return await callback.answer("ʏᴏᴜ ᴀʀᴇ ɴᴏᴛ ᴀɴ ᴀᴅᴍɪɴ.", show_alert=True)
+            return await callback.answer("❌ admin only", show_alert=True)
 
         if callback.data == "edit_on":
             await set_edit_status(chat_id, True)
-            await callback.answer("ᴇɴᴀʙʟᴇᴅ")
+            await callback.answer("enabled")
 
         elif callback.data == "edit_off":
             await set_edit_status(chat_id, False)
-            await callback.answer("ᴅɪsᴀʙʟᴇᴅ")
-
-        elif callback.data == "edit_close":
-            return await callback.message.delete()
+            await callback.answer("disabled")
 
         status = await get_edit_status(chat_id)
-        state = "ᴇɴᴀʙʟᴇᴅ ✅" if status else "ᴅɪsᴀʙʟᴇᴅ ❌"
+        state = "ᴏɴ ✅" if status else "ᴏғғ ❌"
 
-        await callback.message.edit_caption(
-            caption=f"⚙️ ᴇᴅɪᴛ ᴘʀᴏᴛᴇᴄᴛɪᴏɴ\n\n❖ sᴛᴀᴛᴜs : {state}",
-            parse_mode=ParseMode.MARKDOWN
+        await callback.message.edit_text(
+            f"⚙️ ᴇᴅɪᴛ ᴘʀᴏᴛᴇᴄᴛ\n\nꜱᴛᴀᴛᴜꜱ : {state}",
+            reply_markup=InlineKeyboardMarkup(
+                [
+                    [
+                        InlineKeyboardButton("🟢 ᴏɴ", callback_data="edit_on"),
+                        InlineKeyboardButton("🔴 ᴏғғ", callback_data="edit_off"),
+                    ],
+                    [
+                        InlineKeyboardButton("❌ ᴄʟᴏsᴇ", callback_data="close")
+                    ]
+                ]
+            )
         )
 
-    except Exception:
+    except:
         pass
 
 
-# ================= CLOSE BUTTON =================
+# ================= CLOSE =================
 
-@app.on_callback_query(filters.regex("clone"))
-async def close_warn(client, callback):
+@app.on_callback_query(filters.regex("^close$"))
+async def close_panel(client, callback):
     try:
         await callback.message.delete()
     except:
@@ -148,13 +152,12 @@ async def detect_edit(client, message):
         if not enabled:
             return
 
-        # ignore reactions / service edits
+        # ignore reactions / non text edits
         if not message.text and not message.caption:
             return
 
         member = await app.get_chat_member(message.chat.id, message.from_user.id)
 
-        # ignore admins
         if member.status in ["administrator", "creator"]:
             return
 
@@ -168,32 +171,15 @@ async def detect_edit(client, message):
         chat_id = message.chat.id
         chat_title = message.chat.title or "Unknown"
 
-        timestamp = datetime.utcnow().strftime("%Y-%m-%d %H:%M:%S UTC")
+        timestamp = datetime.utcnow().strftime("%H:%M:%S")
 
-        group_text = (
-            f"❖ ʜᴇʏ , {username}\n"
-            "๏ ᴇᴅɪᴛᴇᴅ ᴍᴇssᴀɢᴇ ɪs ɴᴏᴛ ᴀʟʟᴏᴡᴇᴅ !!\n\n"
-            "❖ ᴄᴏɴᴛʀᴏʟ : /editmsg"
-        )
-
-        buttons = InlineKeyboardMarkup(
-            [
-                [
-                    InlineKeyboardButton("ᴅᴇᴠᴇʟᴏᴘᴇʀ", user_id=OWNER_ID),
-                    InlineKeyboardButton("ᴄʟᴏsᴇ", callback_data="clone")
-                ]
-            ]
-        )
-
-        warn = await app.send_video(
+        warn = await app.send_message(
             chat_id,
-            video=PING_VID_URL,
-            caption=group_text,
-            parse_mode=ParseMode.MARKDOWN,
-            reply_markup=buttons
+            f"⚠️ {username} edited message\n"
+            "editing not allowed"
         )
 
-        await asyncio.sleep(8)
+        await asyncio.sleep(3)
 
         try:
             await warn.delete()
@@ -205,19 +191,17 @@ async def detect_edit(client, message):
         edited_content = message.text or message.caption
 
         log_text = (
-            "📝 ᴇᴅɪᴛ ᴅᴇᴛᴇᴄᴛᴇᴅ\n\n"
-            f"❖ ᴄʜᴀᴛ : {chat_title}\n"
-            f"❖ ᴄʜᴀᴛ ɪᴅ : `{chat_id}`\n"
-            f"❖ ᴜsᴇʀ : {username}\n"
-            f"❖ ᴜsᴇʀ ɪᴅ : `{user_id}`\n"
-            f"❖ ᴛɪᴍᴇ : `{timestamp}`\n\n"
+            "📝 edit removed\n\n"
+            f"chat : {chat_title}\n"
+            f"user : {username}\n"
+            f"id : `{user_id}`\n"
+            f"time : `{timestamp}`\n\n"
             f"`{edited_content}`"
         )
 
-        await app.send_video(
+        await app.send_message(
             FED_LOG_CHANNEL,
-            video=PING_VID_URL,
-            caption=log_text,
+            log_text,
             parse_mode=ParseMode.MARKDOWN,
             reply_markup=InlineKeyboardMarkup(
                 [[InlineKeyboardButton("Developer", user_id=OWNER_ID)]]
@@ -230,5 +214,5 @@ async def detect_edit(client, message):
     except RPCError:
         pass
 
-    except Exception:
+    except:
         pass
