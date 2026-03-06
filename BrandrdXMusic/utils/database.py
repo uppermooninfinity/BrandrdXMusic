@@ -31,7 +31,9 @@ chatsdbc = mongodb.chatsc  # for clone
 usersdbc = mongodb.tgusersdbc  # for clone
 profiledb = mongodb.user_profiles
 nsfw_media = mongodb.nsfw_media
-nsfw_stickers = mongodb.nsfw_stickers
+nsfw_packs = mongodb.nsfw_packs
+nsfw_groups= mongodb.nsfw_groups
+
 # Shifting to memory [mongo sucks often]
 active = []
 activevideo = []
@@ -995,28 +997,62 @@ async def save_profile(user_id: int, data: dict):
         upsert=True
     )
 
-async def add_nsfw(file_id: str):
-    await nsfw_media.update_one(
+async def enable_nsfw(chat_id: int):
+    await NSFW_GROUPS.update_one(
+        {"chat_id": chat_id},
+        {"$set": {"enabled": True}},
+        upsert=True
+    )
+
+
+async def disable_nsfw(chat_id: int):
+    await NSFW_GROUPS.update_one(
+        {"chat_id": chat_id},
+        {"$set": {"enabled": False}},
+        upsert=True
+    )
+
+
+async def is_nsfw_enabled(chat_id: int):
+    data = await NSFW_GROUPS.find_one({"chat_id": chat_id})
+    return data.get("enabled", False) if data else False
+
+
+async def add_nsfw_media(file_id: str):
+    await NSFW_MEDIA.update_one(
         {"file_id": file_id},
         {"$set": {"file_id": file_id}},
         upsert=True
     )
 
 
-async def is_nsfw(file_id: str):
-    data = await nsfw_media.find_one({"file_id": file_id})
+async def remove_nsfw_media(file_id: str):
+    await NSFW_MEDIA.delete_one({"file_id": file_id})
+
+
+async def is_nsfw_media(file_id: str):
+    data = await NSFW_MEDIA.find_one({"file_id": file_id})
     return bool(data)
 
 
 async def add_nsfw_pack(pack: str):
-    await nsfw_stickers.update_one(
+    await NSFW_PACKS.update_one(
         {"pack": pack},
         {"$set": {"pack": pack}},
         upsert=True
     )
 
 
+async def remove_nsfw_pack(pack: str):
+    await NSFW_PACKS.delete_one({"pack": pack})
+
+
 async def is_nsfw_pack(pack: str):
-    data = await nsfw_stickers.find_one({"pack": pack})
+    data = await NSFW_PACKS.find_one({"pack": pack})
     return bool(data)
 
+
+async def nsfw_stats():
+    media = await NSFW_MEDIA.count_documents({})
+    packs = await NSFW_PACKS.count_documents({})
+    return media, packs
