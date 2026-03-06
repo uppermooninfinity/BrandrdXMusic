@@ -16,7 +16,7 @@ from BrandrdXMusic import app
 # ================= CONFIG ================= #
 
 SPAM_LIMIT = 5
-AUTO_DELETE_TIME = 10
+AUTO_DELETE_TIME = 2
 
 chat_settings = {}
 user_messages = defaultdict(list)
