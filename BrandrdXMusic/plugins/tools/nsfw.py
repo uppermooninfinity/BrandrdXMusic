@@ -3,8 +3,8 @@ from pyrogram.types import Message
 from BrandrdXMusic import app
 from BrandrdXMusic.mongo import db
 
-nsfw_media = db.nsfw_media
-nsfw_stickers = db.nsfw_stickers
+nsfw_media = mongodb.nsfw_media
+nsfw_stickers = mongodb.nsfw_stickers
 
 
 # ───────────────────────
