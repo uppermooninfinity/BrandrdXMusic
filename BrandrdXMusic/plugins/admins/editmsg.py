@@ -69,7 +69,7 @@ async def editmsg_panel(client, message):
                     InlineKeyboardButton("🔴 ᴏғғ", callback_data="edit_off"),
                 ],
                 [
-                    InlineKeyboardButton("❌ ᴄʟᴏsᴇ", callback_data="edit_close")
+                    InlineKeyboardButton("❌ ᴄʟᴏsᴇ", callback_data="close")
                 ]
             ]
         )
