@@ -14,6 +14,7 @@ from pyrogram.types import (
     InlineKeyboardMarkup,
 )
 
+from config import config
 
 
 # Enable / Disable imposter command
