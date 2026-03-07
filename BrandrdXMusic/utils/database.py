@@ -1273,3 +1273,14 @@ async def disable_imposter(chat_id: int):
 async def is_imposter_enabled(chat_id: int):
     data = await imposterdb.find_one({"chat_id": chat_id})
     return bool(data)
+
+async def get_cmode(chat_id: int) -> int:
+    mode = channelconnect.get(chat_id)
+    if not mode:
+        mode = await channeldb.find_one({"chat_id": chat_id})
+        if not mode:
+            return None
+        channelconnect[chat_id] = mode["mode"]
+        return mode["mode"]
+    return mode
+    
