@@ -22,7 +22,7 @@ import requests
 from BrandrdXMusic.utils.decorators.language import language
 import pyrogram.errors
 
-from BrandrdXMusic.utils.database.clonedb import get_owner_id_from_db
+from BrandrdXMusic.utils.clonedatabase.clonedb import get_owner_id_from_db
 from config import SUPPORT_CHAT, OWNER_ID
 
 from datetime import datetime
