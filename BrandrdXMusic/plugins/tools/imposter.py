@@ -1,5 +1,5 @@
 from BrandrdXMusic import app, IMPOSTER_GROUP
-from BrandrdXMusic.database.imposterdb import (
+from BrandrdXMusic.utils.database import (
     save_or_check_user,
     is_imposter_enabled,
     enable_imposter,
