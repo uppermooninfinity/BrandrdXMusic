@@ -22,7 +22,16 @@ py-tgcalls>=2.2.8
 MukeshAPI
 gitpython
 pykeyboard
+pydub
+pyfiglet
+pyshorteners
 python-dotenv
+python-whois
+pyyaml
+qrcode
+requests
+speedtest-cli
+SpeechRecognition
 pyyaml==6.0.2
 tgcrypto
 telegraph==2.2.0
