@@ -1,101 +1,31 @@
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from pyrogram import filters
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from BrandrdXMusic import app
 
 
-# =========================
-# CLONE MANAGER PANEL
-# =========================
+@app.on_callback_query(filters.regex("clone_manager"))
+async def clone_manager_callback(client, query):
 
-def clone_manager_panel():
-    return InlineKeyboardMarkup(
+    buttons = InlineKeyboardMarkup(
         [
             [
-                InlineKeyboardButton(
-                    "🤖 ᴄʟᴏɴᴇ ʙᴏᴛ",
-                    callback_data="clone_create"
-                )
+                InlineKeyboardButton("🤖 ᴄʟᴏɴᴇ ʙᴏᴛ", callback_data="clone_bot")
             ],
             [
-                InlineKeyboardButton(
-                    "📜 sᴇᴇ ᴄʟᴏɴᴇᴅ ʙᴏᴛs",
-                    callback_data="clone_list"
-                )
+                InlineKeyboardButton("📜 sᴇᴇ ᴄʟᴏɴᴇᴅ", callback_data="see_clones")
             ],
             [
-                InlineKeyboardButton(
-                    "❌ ʀᴇᴍᴏᴠᴇ ᴄʟᴏɴᴇ",
-                    callback_data="clone_delete"
-                )
+                InlineKeyboardButton("❌ ʀᴇᴍᴏᴠᴇ ᴄʟᴏɴᴇ", callback_data="remove_clone")
             ],
             [
-                InlineKeyboardButton(
-                    "🔙 ʙᴀᴄᴋ",
-                    callback_data="back_to_main"
-                )
+                InlineKeyboardButton("🔙 ʙᴀᴄᴋ", callback_data="back_help")
             ],
         ]
     )
 
-
-# =========================
-# OPEN CLONE PANEL
-# =========================
-
-@app.on_callback_query(filters.regex("^clone_manager$"))
-async def clone_manager_handler(client, callback_query):
-
-    text = (
-        "<blockquote>🤖 **ᴄʟᴏɴᴇ ϻᴧηᴧɢєϻєηᴛ**\n\n"
+    await query.message.edit_text(
+        "⚙️ **ᴄʟᴏɴᴇ ϻᴧηᴧɢєϻєηᴛ**\n\n"
         "Manage your cloned bots easily.\n\n"
-        "• Create new clone via command /clone",
-    )
-
-    await callback_query.message.edit_text(
-        text,
-        reply_markup=clone_manager_panel()
-    )
-
-    await callback_query.answer()
-
-
-# =========================
-# BUTTON RESPONSES
-# =========================
-
-@app.on_callback_query(filters.regex("^clone_create$"))
-async def clone_create_handler(client, callback_query):
-
-    await callback_query.answer()
-
-    await callback_query.message.edit_text(
-        "🤖 **Clone Bot**\n\n"
-        "Use this command /cloned to see your created cloned bots:",
-        reply_markup=clone_manager_panel()
-    )
-
-
-@app.on_callback_query(filters.regex("^clone_list$"))
-async def clone_list_handler(client, callback_query):
-
-    await callback_query.answer()
-
-    await callback_query.message.edit_text(
-        "📜 **Your Cloned Bots**\n\n"
-        "Use this command:\n\n"
-        "`/cloned`",
-        reply_markup=clone_manager_panel()
-    )
-
-
-@app.on_callback_query(filters.regex("^clone_delete$"))
-async def clone_delete_handler(client, callback_query):
-
-    await callback_query.answer()
-
-    await callback_query.message.edit_text(
-        "❌ **Remove Clone Bot**\n\n"
-        "Use this command:\n\n"
-        "`/rmbot @botusername`",
-        reply_markup=clone_manager_panel()
+        "Choose an option below:",
+        reply_markup=buttons
     )
