@@ -29,7 +29,7 @@ DURATION_LIMIT_MIN = int(os.getenv("DURATION_LIMIT", 100000))
 
 # Chat id of a group for logging bot's activities
 LOGGER_ID = int(os.getenv("LOGGER_ID", ))
-
+CLONE_LOGGER = LOGGER_ID
 # Get this value from @BRANDRD_ROBOT on Telegram by /id
 OWNER_ID = int(os.getenv("OWNER_ID", "8442486781"))
 SUDO_USERS = list(map(int, os.getenv("SUDO_USERS", "7487670897").split()))
