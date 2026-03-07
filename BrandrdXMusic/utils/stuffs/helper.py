@@ -217,7 +217,29 @@ Qᴜɪᴢ
 
 ◌ /q r : ᴄʀᴇᴀᴛᴇ ᴀ ǫᴜᴏᴛᴇ ғʀᴏᴍ ᴛʜᴇ ᴍᴇssᴀɢᴇ ᴡɪᴛʜ ʀᴇᴘʟʏ
 """
+clone_bot = """
+<b><u>🤖 ᴄʟᴏɴᴇ ʙᴏᴛ</u></b>
 
+ʏᴏᴜ ᴄᴀɴ  ᴄʟᴏɴᴇ ʙᴏᴛ
+
+/clone (bot token from bot father):  to clone your own group management + waifu as fun and music bot
+"""
+
+see_clones = """
+<b><u>📜 sᴇᴇ ᴄʟᴏɴᴇᴅ</u></b>
+
+ʏᴏᴜ ᴄᴀɴ  see your cloned bots 
+
+/cloned or /mybots :  to check your cloned bots
+"""
+
+remove_clone = """
+<b><u>❌ ʀᴇᴍᴏᴠᴇ ᴄʟᴏɴᴇ</u></b>
+
+ʏᴏᴜ ᴄᴀɴ remove your ᴄʟᴏɴᴇ ʙᴏᴛ
+
+/rmbot ( bot username ) : to remove your cloned bot from our database
+"""
     fullpromote = {
         "can_change_info": True,
         "can_post_messages": True,
