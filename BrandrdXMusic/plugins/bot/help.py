@@ -140,7 +140,27 @@ async def help_management(client, query: CallbackQuery):
     language = await get_lang(query.message.chat.id)
     _ = get_string(language)
 
-    keyboard = help_back_markup(_)
+    keyboard = InlineKeyboardMarkup(
+        [
+            [
+                InlineKeyboardButton(_["H_B_1"], callback_data="help_callback hb1"),
+                InlineKeyboardButton(_["H_B_8"], callback_data="help_callback hb8"),
+                InlineKeyboardButton(_["H_B_9"], callback_data="help_callback hb9"),
+            ],
+            [
+                InlineKeyboardButton(_["H_B_18"], callback_data="help_callback hb18"),
+                InlineKeyboardButton(_["H_B_20"], callback_data="help_callback hb20"),
+                InlineKeyboardButton(_["H_B_24"], callback_data="help_callback hb24"),
+            ],
+            [
+                InlineKeyboardButton(_["H_B_28"], callback_data="help_callback hb28"),
+            ],
+            [
+                InlineKeyboardButton(_["BACK_BUTTON"], callback_data="back_to_main"),
+            ],
+        ]
+    )
+    
     await query.message.edit_text(
         "• ϻᴧηᴧɢєϻєηᴛ •\n\n"
         "✦ ᴀᴅᴍɪɴ ᴄᴏᴍᴍᴀɴᴅs\n"
@@ -157,7 +177,24 @@ async def help_videochat(client, query: CallbackQuery):
     language = await get_lang(query.message.chat.id)
     _ = get_string(language)
 
-    keyboard = help_back_markup(_)
+    keyboard = InlineKeyboardMarkup(
+        [
+            [
+                InlineKeyboardButton(_["H_B_6"], callback_data="help_callback hb6"),
+                InlineKeyboardButton(_["H_B_11"], callback_data="help_callback hb11"),
+                InlineKeyboardButton(_["H_B_12"], callback_data="help_callback hb12"),
+            ],
+            [
+                InlineKeyboardButton(_["H_B_13"], callback_data="help_callback hb13"),
+                InlineKeyboardButton(_["H_B_14"], callback_data="help_callback hb14"),
+                InlineKeyboardButton(_["H_B_15"], callback_data="help_callback hb15"),
+            ],
+            [
+                InlineKeyboardButton(_["BACK_BUTTON"], callback_data="back_to_main")
+            ]
+        ]
+    )
+    
     await query.message.edit_text(
         "• ᴠɪᴅєσᴄʜᴧᴛ •\n\n"
         "✦ ᴘʟᴀʏ ᴍᴜsɪᴄ\n"
@@ -174,7 +211,25 @@ async def help_fun(client, query: CallbackQuery):
     language = await get_lang(query.message.chat.id)
     _ = get_string(language)
 
-    keyboard = help_back_markup(_)
+    keyboard = InlineKeyboardMarkup(
+        [
+            [
+                InlineKeyboardButton(_["H_B_16"], callback_data="help_callback hb16"),
+                InlineKeyboardButton(_["H_B_17"], callback_data="help_callback hb17"),
+                InlineKeyboardButton(_["H_B_22"], callback_data="help_callback hb22"),
+            ],
+            [
+                InlineKeyboardButton(_["H_B_25"], callback_data="help_callback hb25"),
+                InlineKeyboardButton(_["H_B_27"], callback_data="help_callback hb27"),
+                InlineKeyboardButton("✨ ғsᴜʙ", callback_data="help_callback hb20"),
+                InlineKeyboardButton("🎮 ғᴜɴ ɢᴀᴍᴇ", callback_data="help_callback hb26"),
+            ],
+            [
+                InlineKeyboardButton(_["BACK_BUTTON"], callback_data="back_to_main"),
+            ],
+        ]
+    )
+    
     await query.message.edit_text(
         "• ꜰᴜη •\n\n"
         "✦ ᴇɴᴛᴇʀᴛᴀɪɴᴍᴇɴᴛ ᴄᴏᴍᴍᴀɴᴅs\n"
@@ -191,7 +246,22 @@ async def help_sudoers(client, query: CallbackQuery):
     language = await get_lang(query.message.chat.id)
     _ = get_string(language)
 
-    keyboard = help_back_markup(_)
+    keyboard = InlineKeyboardMarkup(
+        [
+            [
+                InlineKeyboardButton(_["H_B_7"], callback_data="help_callback hb7"),
+                InlineKeyboardButton(_["H_B_4"], callback_data="help_callback hb4"),
+            ],
+            [
+                InlineKeyboardButton(_["H_B_3"], callback_data="help_callback hb3"),
+                InlineKeyboardButton(_["H_B_2"], callback_data="help_callback hb2"),
+                InlineKeyboardButton(_["H_B_5"], callback_data="help_callback hb5"),
+            ],
+            [
+                InlineKeyboardButton(_["BACK_BUTTON"], callback_data="back_to_main"),
+            ],
+        ]
+    )
     await query.message.edit_text(
         "• ꜱᴜᴅσєʀꜱ •\n\n"
         "✦ ᴏᴡɴᴇʀ ᴄᴏᴍᴍᴀɴᴅs\n"
@@ -208,7 +278,22 @@ async def help_clone(client, query: CallbackQuery):
     language = await get_lang(query.message.chat.id)
     _ = get_string(language)
 
-    keyboard = help_back_markup(_)
+    keyboard = InlineKeyboardMarkup(
+        [
+            [
+                InlineKeyboardButton("🤖 ᴄʟᴏɴᴇ ʙᴏᴛ", callback_data="clone_bot")
+            ],
+            [
+                InlineKeyboardButton("📜 sᴇᴇ ᴄʟᴏɴᴇᴅ", callback_data="see_clones")
+            ],
+            [
+                InlineKeyboardButton("❌ ʀᴇᴍᴏᴠᴇ ᴄʟᴏɴᴇ", callback_data="remove_clone")
+            ],
+            [
+                InlineKeyboardButton("🔙 ʙᴀᴄᴋ", callback_data="back_help")
+            ],
+        ]
+    )
     await query.message.edit_text(
         "• ᴄʟᴏɴᴇ ϻᴧηᴧɢєϻєηᴛ •\n\n"
         "✦ ᴄʀᴇᴀᴛᴇ ʙᴏᴛ ᴄʟᴏɴᴇ\n"
