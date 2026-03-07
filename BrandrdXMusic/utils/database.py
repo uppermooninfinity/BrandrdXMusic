@@ -30,9 +30,11 @@ videodb = mongodb.vipvideocalls
 chatsdbc = mongodb.chatsc  # for clone
 usersdbc = mongodb.tgusersdbc  # for clone
 profiledb = mongodb.user_profiles
-nsfw_media = mongodb.nsfw_media
-nsfw_packs = mongodb.nsfw_packs
-nsfw_groups= mongodb.nsfw_groups
+nsfwdb = mongodb.NSFW_DATA
+nsfwpackdb = mongodb.NSFW_PACKS
+nsfwstatusdb = mongodb.NSFW_STATUS
+
+
 
 # Shifting to memory [mongo sucks often]
 active = []
@@ -997,62 +999,77 @@ async def save_profile(user_id: int, data: dict):
         upsert=True
     )
 
-async def enable_nsfw(chat_id: int):
-    await NSFW_GROUPS.update_one(
-        {"chat_id": chat_id},
-        {"$set": {"enabled": True}},
-        upsert=True
-    )
+
+async def add_nsfw(file_id: str):
+    data = await nsfwdb.find_one({"file_id": file_id})
+    if data:
+        return
+    await nsfwdb.insert_one({"file_id": file_id})
 
 
-async def disable_nsfw(chat_id: int):
-    await NSFW_GROUPS.update_one(
-        {"chat_id": chat_id},
-        {"$set": {"enabled": False}},
-        upsert=True
-    )
+async def remove_nsfw(file_id: str):
+    await nsfwdb.delete_one({"file_id": file_id})
 
 
-async def is_nsfw_enabled(chat_id: int):
-    data = await NSFW_GROUPS.find_one({"chat_id": chat_id})
-    return data.get("enabled", False) if data else False
-
-
-async def add_nsfw_media(file_id: str):
-    await NSFW_MEDIA.update_one(
-        {"file_id": file_id},
-        {"$set": {"file_id": file_id}},
-        upsert=True
-    )
-
-
-async def remove_nsfw_media(file_id: str):
-    await NSFW_MEDIA.delete_one({"file_id": file_id})
-
-
-async def is_nsfw_media(file_id: str):
-    data = await NSFW_MEDIA.find_one({"file_id": file_id})
+async def is_nsfw(file_id: str):
+    data = await nsfwdb.find_one({"file_id": file_id})
     return bool(data)
 
 
-async def add_nsfw_pack(pack: str):
-    await NSFW_PACKS.update_one(
-        {"pack": pack},
-        {"$set": {"pack": pack}},
-        upsert=True
-    )
+async def get_all_nsfw():
+    data = []
+    async for x in nsfwdb.find():
+        data.append(x["file_id"])
+    return data
 
 
-async def remove_nsfw_pack(pack: str):
-    await NSFW_PACKS.delete_one({"pack": pack})
+# -------------------------
+# STICKER PACK NSFW
+# -------------------------
+
+async def add_nsfw_pack(packname: str):
+    data = await nsfwpackdb.find_one({"pack": packname})
+    if data:
+        return
+    await nsfwpackdb.insert_one({"pack": packname})
 
 
-async def is_nsfw_pack(pack: str):
-    data = await NSFW_PACKS.find_one({"pack": pack})
+async def remove_nsfw_pack(packname: str):
+    await nsfwpackdb.delete_one({"pack": packname})
+
+
+async def is_nsfw_pack(packname: str):
+    data = await nsfwpackdb.find_one({"pack": packname})
     return bool(data)
 
 
-async def nsfw_stats():
-    media = await NSFW_MEDIA.count_documents({})
-    packs = await NSFW_PACKS.count_documents({})
-    return media, packs
+# -------------------------
+# GROUP NSFW STATUS
+# -------------------------
+
+async def set_nsfw_status(chat_id: int, status: bool):
+
+    data = await nsfwstatusdb.find_one({"chat_id": chat_id})
+
+    if data:
+        await nsfwstatusdb.update_one(
+            {"chat_id": chat_id},
+            {"$set": {"status": status}}
+        )
+    else:
+        await nsfwstatusdb.insert_one(
+            {
+                "chat_id": chat_id,
+                "status": status
+            }
+        )
+
+
+async def get_nsfw_status(chat_id: int):
+
+    data = await nsfwstatusdb.find_one({"chat_id": chat_id})
+
+    if not data:
+        return False
+
+    return data["status"]
