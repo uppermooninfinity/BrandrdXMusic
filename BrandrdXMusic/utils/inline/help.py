@@ -24,7 +24,7 @@ def help_pannel(_, START: Union[bool, int] = None):
         [
             [
                 InlineKeyboardButton("• ᴠɪᴅєσᴄʜᴧᴛ •", callback_data="HELP_VIDEOCHAT"),
-                InlineKeyboardButton(" • ꜰᴜη •", callback_data="help_category fun"),
+                InlineKeyboardButton(" • ꜰᴜη •", callback_data="HELP_FUN"),
             ],
             [
                 InlineKeyboardButton("• ϻᴧηᴧɢєϻєηᴛ •", callback_data="help_category moderation"),
