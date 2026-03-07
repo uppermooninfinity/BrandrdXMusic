@@ -44,17 +44,12 @@ async def start_pm(client, message: Message, _):
     await add_served_user_clone(message.from_user.id, bot_id)
 
     loading_1 = await message.reply_text("⚡")
-    C_BOT_OWNER_ID = get_owner_id_from_db(a.id)
-    # await asyncio.sleep(0.2)
-    
     await loading_1.edit_text("<b>ʟᴏᴀᴅɪɴɢ</b>")
-    C_BOT_SUPPORT_CHAT = await get_cloned_support_chat(a.id)
-    C_SUPPORT_CHAT = f"https://t.me/snowy_hometown"
-    # await asyncio.sleep(0.1)
-    await loading_1.edit_text("<b>ʟᴏᴀᴅɪɴɢ.</b>")
-    C_BOT_SUPPORT_CHANNEL = await get_cloned_support_channel(a.id)
-    C_SUPPORT_CHANNEL = f"https://t.me/dark_musictm"
-    # await asyncio.sleep(0.1)
+    await asyncio.sleep(0.2)
+    await loading_1.edit_text("<b>ʟᴏᴀᴅɪɴɢ..</b>")
+    await asyncio.sleep(0.1)
+    await loading_1.edit_text("<b>ʟᴏᴀᴅɪɴɢ....</b>")
+    await asyncio.sleep(0.1)
     await loading_1.edit_text("<b>ʟᴏᴀᴅɪɴɢ..</b>")
     await asyncio.sleep(0.1)
     await loading_1.edit_text("<b>ʟᴏᴀᴅɪɴɢ...</b>")
@@ -63,7 +58,11 @@ async def start_pm(client, message: Message, _):
 
 
     #Cloned Bot Support Chat and channel
-
+    C_BOT_OWNER_ID = get_owner_id_from_db(a.id)
+    C_BOT_SUPPORT_CHAT = await get_cloned_support_chat(a.id)
+    C_SUPPORT_CHAT = f"https://t.me/snowy_hometown"
+    C_BOT_SUPPORT_CHANNEL = await get_cloned_support_channel(a.id)
+    C_SUPPORT_CHANNEL = f"https://t.me/dark_musictm"
     #new ------
     if len(message.text.split()) > 1:
         name = message.text.split(None, 1)[1]
