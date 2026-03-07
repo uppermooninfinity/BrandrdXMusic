@@ -33,7 +33,7 @@ profiledb = mongodb.user_profiles
 nsfwdb = mongodb.NSFW_DATA
 nsfwpackdb = mongodb.NSFW_PACKS
 nsfwstatusdb = mongodb.NSFW_STATUS
-
+antichanneldb = mongodb.antichannel
 
 
 # Shifting to memory [mongo sucks often]
@@ -1073,3 +1073,4 @@ async def get_nsfw_status(chat_id: int):
         return False
 
     return data["status"]
+
