@@ -14,16 +14,17 @@ from pyrogram.types import (
     InlineKeyboardMarkup,
 )
 
-from config import COMMAND_PREFIXES
+# Manually defined prefixes
+PREFIXES = ["/", "!", ".", "#", "$", "%", "&", "?"]
 
 
 # Enable / Disable imposter command
-@app.on_message(filters.command("imposter", prefixes=config.COMMAND_PREFIXES) & filters.group)
+@app.on_message(filters.command("imposter", prefixes=PREFIXES) & filters.group)
 async def imposter_handler(_, message: Message):
 
-    # Check admin
     member = await message.chat.get_member(message.from_user.id)
-    if not member.privileges:
+
+    if member.status not in ["administrator", "creator"]:
         return await message.reply_text("❌ **Only admins can use this command.**")
 
     chat_id = message.chat.id
@@ -74,7 +75,7 @@ async def toggle_imposter(_, query: CallbackQuery):
 
     member = await query.message.chat.get_member(query.from_user.id)
 
-    if not member.privileges:
+    if member.status not in ["administrator", "creator"]:
         return await query.answer("Only admins can use this.", show_alert=True)
 
     chat = await app.get_chat(chat_id)
@@ -139,11 +140,11 @@ __HELP__ = """
 
 Detects when users change their profile.
 
-**Tracks**
+Tracks:
 • Username
 • First Name
 • Last Name
 
-**Command**
+Command:
 /imposter - Enable or disable imposter detection
 """
