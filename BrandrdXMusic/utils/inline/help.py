@@ -23,7 +23,7 @@ def help_pannel(_, START: Union[bool, int] = None):
     upl = InlineKeyboardMarkup(
         [
             [
-                InlineKeyboardButton("• ᴠɪᴅєσᴄʜᴧᴛ •", callback_data="help_category videochat"),
+                InlineKeyboardButton("• ᴠɪᴅєσᴄʜᴧᴛ •", callback_data="HELP_VIDEOCHAT"),
                 InlineKeyboardButton(" • ꜰᴜη •", callback_data="help_category fun"),
             ],
             [
