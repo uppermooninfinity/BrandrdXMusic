@@ -6,7 +6,7 @@ from BrandrdXMusic.utils.database import (
     disable_imposter,
 )
 
-from pyrogram import Client, filters
+from pyrogram import filters
 from pyrogram.types import (
     Message,
     CallbackQuery,
@@ -15,81 +15,90 @@ from pyrogram.types import (
 )
 
 
-from BrandrdXMusic.decorator.chatadmin import chatadmin
-from BrandrdXMusic.decorator.save import save
-from BrandrdXMusic.decorator.errors import error
 
-
-# Command to toggle imposter status
+# Enable / Disable imposter command
 @app.on_message(filters.command("imposter", prefixes=config.COMMAND_PREFIXES) & filters.group)
-@chatadmin
-@error
-@save
-async def imposter_handler(client: Client, message: Message):
+async def imposter_handler(_, message: Message):
+
+    # Check admin
+    member = await message.chat.get_member(message.from_user.id)
+    if not member.privileges:
+        return await message.reply_text("❌ **Only admins can use this command.**")
+
     chat_id = message.chat.id
 
     if await is_imposter_enabled(chat_id):
-        button = InlineKeyboardMarkup(
+
+        keyboard = InlineKeyboardMarkup(
             [
                 [
                     InlineKeyboardButton(
-                        "🔴 Disable 𝖨𝗆𝗉𝗈𝗌𝗍𝖾𝗋",
+                        "🔴 Disable Imposter",
                         callback_data=f"disable_imposter:{chat_id}",
                     )
-                ],
-                [InlineKeyboardButton("🗑️", callback_data="delete")],
+                ]
             ]
         )
+
         await message.reply_text(
-            "**📢 𝖨𝗆𝗉𝗈𝗌𝗍𝖾𝗋 is enabled in this chat.**",
-            reply_markup=button,
+            "**📢 Imposter detection is currently ENABLED in this chat.**",
+            reply_markup=keyboard,
         )
+
     else:
-        button = InlineKeyboardMarkup(
+
+        keyboard = InlineKeyboardMarkup(
             [
                 [
                     InlineKeyboardButton(
-                        "🟢 Enable 𝖨𝗆𝗉𝗈𝗌𝗍𝖾𝗋",
+                        "🟢 Enable Imposter",
                         callback_data=f"enable_imposter:{chat_id}",
                     )
-                ],
-                [InlineKeyboardButton("🗑️", callback_data="delete")],
+                ]
             ]
         )
+
         await message.reply_text(
-            "**📢 𝖨𝗆𝗉𝗈𝗌𝗍𝖾𝗋 is disabled in this chat.**",
-            reply_markup=button,
+            "**📢 Imposter detection is currently DISABLED in this chat.**",
+            reply_markup=keyboard,
         )
 
 
-# Callback query handler
+# Button handler
 @app.on_callback_query(filters.regex("^(enable_imposter|disable_imposter):"))
-@chatadmin
-@error
-async def toggle_imposters(client: Client, callback_query: CallbackQuery):
-    action, chat_id = callback_query.data.split(":")
+async def toggle_imposter(_, query: CallbackQuery):
+
+    action, chat_id = query.data.split(":")
     chat_id = int(chat_id)
 
-    chat = await client.get_chat(chat_id)
+    member = await query.message.chat.get_member(query.from_user.id)
+
+    if not member.privileges:
+        return await query.answer("Only admins can use this.", show_alert=True)
+
+    chat = await app.get_chat(chat_id)
 
     if action == "enable_imposter":
+
         await enable_imposter(chat_id, chat.title, chat.username)
-        await callback_query.message.edit_text(
-            "**🟢 𝖨𝗆𝗉𝗈𝗌𝗍𝖾𝗋 has been enabled for this chat.**"
+
+        await query.message.edit_text(
+            "**🟢 Imposter detection has been ENABLED for this chat.**"
         )
 
     elif action == "disable_imposter":
+
         await disable_imposter(chat_id)
-        await callback_query.message.edit_text(
-            "**🔴 𝖨𝗆𝗉𝗈𝗌𝗍𝖾𝗋 has been disabled for this chat.**"
+
+        await query.message.edit_text(
+            "**🔴 Imposter detection has been DISABLED for this chat.**"
         )
 
 
 # Detect profile changes
-@app.on_message(filters.group, group=IMPOSTER_GROUP)
-@error
-@save
-async def imposter_text_handler(client: Client, message: Message):
+@app.on_message(filters.group)
+async def detect_imposter(_, message: Message):
+
     chat_id = message.chat.id
 
     if not await is_imposter_enabled(chat_id):
@@ -102,40 +111,38 @@ async def imposter_text_handler(client: Client, message: Message):
     changes = await save_or_check_user(user)
 
     if changes:
-        change_details = "\n".join(
-            f"• **{field.capitalize()}:**\n"
-            f"   - **Previous:** {old if old else 'None'}\n"
-            f"   - **Updated:** {new if new else 'None'}"
-            for field, old, new in changes
+
+        change_text = ""
+
+        for field, old, new in changes:
+            change_text += (
+                f"• **{field.capitalize()} Changed**\n"
+                f"  ├ Old : `{old}`\n"
+                f"  └ New : `{new}`\n\n"
+            )
+
+        alert = (
+            f"⚠️ **User Profile Updated**\n\n"
+            f"👤 User : {user.mention}\n"
+            f"🆔 ID : `{user.id}`\n\n"
+            f"{change_text}"
         )
 
-        announcement = (
-            f"🔔 **User Profile Update Detected**\n\n"
-            f"👤 **User:** {user.mention()} ({user.id})\n\n"
-            f"{change_details}"
-        )
-
-        await message.reply_text(
-            announcement,
-            disable_web_page_preview=True,
-        )
+        await message.reply_text(alert)
 
 
-__module__ = "Imposter"
+__MODULE__ = "Imposter"
 
+__HELP__ = """
+**Imposter Detection**
 
-__help__ = """
-**Purpose:**
-This module monitors changes in user profile information in group chats.
+Detects when users change their profile.
 
-**Features:**
-✧ Tracks changes in:
-  - Username
-  - First Name
-  - Last Name
+**Tracks**
+• Username
+• First Name
+• Last Name
 
-✧ Sends notification in group when a user updates profile details.
-
-**Command:**
+**Command**
 /imposter - Enable or disable imposter detection
 """
