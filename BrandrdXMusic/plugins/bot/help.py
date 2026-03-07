@@ -136,7 +136,10 @@ async def on_back_button(client, CallbackQuery):
 @app.on_callback_query(filters.regex("^HELP_MANAGEMENT$") & ~BANNED_USERS)
 async def help_management(client, query: CallbackQuery):
 
-    keyboard = help_back_markup({})
+    language = await get_lang(query.message.chat.id)
+    _ = get_string(language)
+
+    keyboard = help_back_markup(_)
     await query.message.edit_text(
         "• ϻᴧηᴧɢєϻєηᴛ •\n\n"
         "✦ ᴀᴅᴍɪɴ ᴄᴏᴍᴍᴀɴᴅs\n"
@@ -150,7 +153,10 @@ async def help_management(client, query: CallbackQuery):
 @app.on_callback_query(filters.regex("^HELP_VIDEOCHAT$") & ~BANNED_USERS)
 async def help_videochat(client, query: CallbackQuery):
 
-    keyboard = help_back_markup({})
+    language = await get_lang(query.message.chat.id)
+    _ = get_string(language)
+
+    keyboard = help_back_markup(_)
     await query.message.edit_text(
         "• ᴠɪᴅєσᴄʜᴧᴛ •\n\n"
         "✦ ᴘʟᴀʏ ᴍᴜsɪᴄ\n"
@@ -164,7 +170,10 @@ async def help_videochat(client, query: CallbackQuery):
 @app.on_callback_query(filters.regex("^HELP_FUN$") & ~BANNED_USERS)
 async def help_fun(client, query: CallbackQuery):
 
-    keyboard = help_back_markup({})
+    language = await get_lang(query.message.chat.id)
+    _ = get_string(language)
+
+    keyboard = help_back_markup(_)
     await query.message.edit_text(
         "• ꜰᴜη •\n\n"
         "✦ ᴇɴᴛᴇʀᴛᴀɪɴᴍᴇɴᴛ ᴄᴏᴍᴍᴀɴᴅs\n"
@@ -178,7 +187,10 @@ async def help_fun(client, query: CallbackQuery):
 @app.on_callback_query(filters.regex("^HELP_SUDOERS$") & ~BANNED_USERS)
 async def help_sudoers(client, query: CallbackQuery):
 
-    keyboard = help_back_markup({})
+    language = await get_lang(query.message.chat.id)
+    _ = get_string(language)
+
+    keyboard = help_back_markup(_)
     await query.message.edit_text(
         "• ꜱᴜᴅσєʀꜱ •\n\n"
         "✦ ᴏᴡɴᴇʀ ᴄᴏᴍᴍᴀɴᴅs\n"
@@ -192,7 +204,10 @@ async def help_sudoers(client, query: CallbackQuery):
 @app.on_callback_query(filters.regex("^clone_manager$") & ~BANNED_USERS)
 async def help_clone(client, query: CallbackQuery):
 
-    keyboard = help_back_markup({})
+    language = await get_lang(query.message.chat.id)
+    _ = get_string(language)
+
+    keyboard = help_back_markup(_)
     await query.message.edit_text(
         "• ᴄʟᴏɴᴇ ϻᴧηᴧɢєϻєηᴛ •\n\n"
         "✦ ᴄʀᴇᴀᴛᴇ ʙᴏᴛ ᴄʟᴏɴᴇ\n"
