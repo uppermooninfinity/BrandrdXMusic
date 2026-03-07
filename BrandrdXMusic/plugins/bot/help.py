@@ -213,6 +213,8 @@ async def back_to_main_handler(client, query: CallbackQuery):
     language = await get_lang(query.message.chat.id)
     _ = get_string(language)
 
+    keyboard = help_back_markup(_)
+
     await query.message.edit_text(
         "Choose the category for which you wanna get help",
         reply_markup=help_pannel(_),
