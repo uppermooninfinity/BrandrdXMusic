@@ -14,7 +14,7 @@ from pyrogram.types import (
     InlineKeyboardMarkup,
 )
 
-from config import config
+
 from BrandrdXMusic.decorator.chatadmin import chatadmin
 from BrandrdXMusic.decorator.save import save
 from BrandrdXMusic.decorator.errors import error
