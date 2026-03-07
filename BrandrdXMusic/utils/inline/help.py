@@ -33,7 +33,6 @@ def help_pannel(_, START: Union[bool, int] = None):
             [
                 InlineKeyboardButton("• ϻᴧηᴧɢєϻєηᴛ ᴄʟᴏηє •", callback_data="clone_manager")
             ]
-            *mark,
         ]
     )
     return upl
