@@ -14,7 +14,7 @@ from pyrogram.types import (
     InlineKeyboardMarkup,
 )
 
-
+from config import config 
 
 # Enable / Disable imposter command
 @app.on_message(filters.command("imposter", prefixes=config.COMMAND_PREFIXES) & filters.group)
