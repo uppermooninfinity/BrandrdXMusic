@@ -1,224 +1,143 @@
 from pyrogram import filters
-from pyrogram.types import ChatPermissions
-from datetime import datetime, timedelta
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from pyrogram.errors import ChatAdminRequired
 
 from BrandrdXMusic import app
 from BrandrdXMusic.utils.database import (
-    get_antiflood_settings,
-    set_flood_threshold,
-    set_flood_timer,
-    set_flood_action,
-    set_delete_flood_messages,
-    set_flood_action_duration,
-    get_flood_action_duration
+    enable_antiflood,
+    disable_antiflood,
+    is_antiflood_enabled
 )
 
-flood_tracker = {}
+from collections import defaultdict
+import time
+
+flood = defaultdict(list)
 
 
 # ─────────────────────────────
-# ADMIN CHECK
+# PANEL
 # ─────────────────────────────
 
-async def is_admin(chat_id, user_id):
-    member = await app.get_chat_member(chat_id, user_id)
-    return member.status in ["administrator", "creator"]
+@app.on_message(filters.command("antiflood") & filters.group)
+async def antiflood_panel(_, message):
 
+    user = await app.get_chat_member(message.chat.id, message.from_user.id)
 
-# ─────────────────────────────
-# SHOW SETTINGS
-# ─────────────────────────────
-
-@app.on_message(filters.command("flood") & filters.group)
-async def flood_settings(_, message):
-
-    if not await is_admin(message.chat.id, message.from_user.id):
+    if not user.privileges or not user.privileges.can_delete_messages:
         return
 
-    settings = await get_antiflood_settings(message.chat.id)
+    chat_id = message.chat.id
 
-    if settings["flood_threshold"] == 0:
-        return await message.reply_text(
-            "**⚠️ 𝖠𝗇𝗍𝗂-𝖥𝗅𝗈𝗈𝖽 𝗂𝗌 𝖢𝗎𝗋𝗋𝖾𝗇𝗍𝗅𝗒 𝖣𝗂𝗌𝖺𝖻𝗅𝖾𝖽.**"
+    if await is_antiflood_enabled(chat_id):
+
+        buttons = InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(
+                        "🔴 𝖣𝗂𝗌𝖺𝖻𝗅𝖾 𝖠𝗇𝗍𝗂𝖥𝗅𝗈𝗈𝖽",
+                        callback_data=f"antiflood_disable:{chat_id}"
+                    )
+                ]
+            ]
         )
 
-    await message.reply_text(
-        f"""
-**🛡️ 𝖠𝗇𝗍𝗂-𝖥𝗅𝗈𝗈𝖽 𝖲𝖾𝗍𝗍𝗂𝗇𝗀𝗌**
+        await message.reply_text(
+            "**🌊 𝖠𝗇𝗍𝗂-𝖥𝗅𝗈𝗈𝖽 𝗂𝗌 𝖤𝗇𝖺𝖻𝗅𝖾𝖽.**",
+            reply_markup=buttons
+        )
 
-• 𝖳𝗁𝗋𝖾𝗌𝗁𝗈𝗅𝖽 : `{settings["flood_threshold"]}` messages  
-• 𝖳𝗂𝗆𝖾𝖽 : `{settings["flood_timer_count"]}` msgs / `{settings["flood_timer_duration"]}s`  
-• 𝖠𝖼𝗍𝗂𝗈𝗇 : `{settings["flood_action"]}`  
-• 𝖣𝖾𝗅𝖾𝗍𝖾 𝖬𝗌𝗀𝗌 : `{settings["delete_flood_messages"]}`
-"""
-    )
+    else:
+
+        buttons = InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(
+                        "🟢 𝖤𝗇𝖺𝖻𝗅𝖾 𝖠𝗇𝗍𝗂𝖥𝗅𝗈𝗈𝖽",
+                        callback_data=f"antiflood_enable:{chat_id}"
+                    )
+                ]
+            ]
+        )
+
+        await message.reply_text(
+            "**⚠️ 𝖠𝗇𝗍𝗂-𝖥𝗅𝗈𝗈𝖽 𝗂𝗌 𝖣𝗂𝗌𝖺𝖻𝗅𝖾𝖽.**",
+            reply_markup=buttons
+        )
 
 
 # ─────────────────────────────
-# SET FLOOD LIMIT
+# BUTTON
 # ─────────────────────────────
 
-@app.on_message(filters.command("setflood") & filters.group)
-async def setflood(_, message):
+@app.on_callback_query(filters.regex("antiflood_"))
+async def antiflood_toggle(_, query):
 
-    if not await is_admin(message.chat.id, message.from_user.id):
-        return
+    data = query.data.split(":")
+    action = data[0]
+    chat_id = int(data[1])
 
-    if len(message.command) < 2:
-        return await message.reply_text(
-            "**Usage:** `/setflood 5` or `/setflood off`"
+    if action == "antiflood_enable":
+
+        await enable_antiflood(chat_id)
+
+        await query.message.edit_text(
+            "**🟢 𝖠𝗇𝗍𝗂-𝖥𝗅𝗈𝗈𝖽 𝖤𝗇𝖺𝖻𝗅𝖾𝖽.**"
         )
 
-    arg = message.command[1].lower()
+    elif action == "antiflood_disable":
 
-    if arg == "off":
-        await set_flood_threshold(message.chat.id, 0)
-        return await message.reply_text(
+        await disable_antiflood(chat_id)
+
+        await query.message.edit_text(
             "**🔴 𝖠𝗇𝗍𝗂-𝖥𝗅𝗈𝗈𝖽 𝖣𝗂𝗌𝖺𝖻𝗅𝖾𝖽.**"
         )
 
-    threshold = int(arg)
-
-    await set_flood_threshold(message.chat.id, threshold)
-
-    await message.reply_text(
-        f"**🛡️ Flood limit set to `{threshold}` messages.**"
-    )
-
 
 # ─────────────────────────────
-# SET FLOOD MODE
+# FLOOD PROTECTION
 # ─────────────────────────────
 
-@app.on_message(filters.command("floodmode") & filters.group)
-async def floodmode(_, message):
+@app.on_message(filters.group)
+async def antiflood_protection(_, message):
 
-    if not await is_admin(message.chat.id, message.from_user.id):
-        return
-
-    if len(message.command) < 2:
-        return await message.reply_text(
-            "**Usage:** `/floodmode ban|mute|kick|tban|tmute`"
-        )
-
-    action = message.command[1].lower()
-
-    if action not in ["ban", "mute", "kick", "tban", "tmute"]:
-        return await message.reply_text(
-            "**Invalid Action.**"
-        )
-
-    await set_flood_action(message.chat.id, action)
-
-    await message.reply_text(
-        f"**⚙️ Flood action set to `{action}`**"
-    )
-
-
-# ─────────────────────────────
-# FLOOD DETECTION
-# ─────────────────────────────
-
-@app.on_message(filters.group & ~filters.service)
-async def detect_flood(_, message):
-
-    user = message.from_user
     chat_id = message.chat.id
 
-    if not user:
+    if not await is_antiflood_enabled(chat_id):
         return
 
-    if await is_admin(chat_id, user.id):
-        return
-
-    settings = await get_antiflood_settings(chat_id)
-
-    if settings["flood_threshold"] == 0:
-        return
-
-    if user.id not in flood_tracker:
-        flood_tracker[user.id] = {"count": 0, "messages": []}
-
-    flood_tracker[user.id]["count"] += 1
-    flood_tracker[user.id]["messages"].append(message)
-
-    if flood_tracker[user.id]["count"] >= settings["flood_threshold"]:
-
-        await take_action(message, settings)
-
-        flood_tracker[user.id] = {"count": 0, "messages": []}
-
-
-# ─────────────────────────────
-# TAKE ACTION
-# ─────────────────────────────
-
-async def take_action(message, settings):
-
-    chat_id = message.chat.id
     user_id = message.from_user.id
-    action = settings["flood_action"]
 
-    duration = await get_flood_action_duration(chat_id)
+    now = time.time()
 
-    if action == "ban":
-        await app.ban_chat_member(chat_id, user_id)
+    flood[user_id].append(now)
 
-    elif action == "kick":
-        await app.ban_chat_member(chat_id, user_id)
-        await app.unban_chat_member(chat_id, user_id)
+    flood[user_id] = [x for x in flood[user_id] if now - x < 5]
 
-    elif action == "mute":
-        await app.restrict_chat_member(
-            chat_id,
-            user_id,
-            ChatPermissions()
-        )
+    if len(flood[user_id]) > 6:
 
-    elif action == "tban":
+        try:
 
-        until = datetime.now() + timedelta(seconds=duration)
+            await message.chat.restrict_member(
+                user_id,
+                permissions=message.chat.permissions
+            )
 
-        await app.ban_chat_member(chat_id, user_id, until_date=until)
+            await message.reply_text(
+                f"🚫 {message.from_user.mention} **Muted for Flooding.**"
+            )
 
-    elif action == "tmute":
+        except ChatAdminRequired:
+            pass
 
-        until = datetime.now() + timedelta(seconds=duration)
-
-        await app.restrict_chat_member(
-            chat_id,
-            user_id,
-            ChatPermissions(),
-            until_date=until
-        )
-
-    await message.reply_text(
-        "**🚫 𝖠𝗇𝗍𝗂-𝖥𝗅𝗈𝗈𝖽 𝖳𝗋𝗂𝗀𝗀𝖾𝗋𝖾𝖽**\n"
-        "> 𝖴𝗌𝖾𝗋 𝗐𝖺𝗌 𝗉𝗎𝗇𝗂𝗌𝗁𝖾𝖽 𝖿𝗈𝗋 𝗌𝗉𝖺𝗆𝗆𝗂𝗇𝗀."
-    )
-
-    if settings["delete_flood_messages"]:
-
-        for msg in flood_tracker[user_id]["messages"]:
-            try:
-                await msg.delete()
-            except:
-                pass
-
-
-# ─────────────────────────────
 
 __MODULE__ = "𝖠𝗇𝗍𝗂𝖥𝗅𝗈𝗈𝖽"
 
 __HELP__ = """
-**🛡️ 𝖠𝗇𝗍𝗂-𝖥𝗅𝗈𝗈𝖽**
+**🌊 𝖠𝗇𝗍𝗂-𝖥𝗅𝗈𝗈𝖽**
 
-/flood  
-→ Show antiflood settings
+/antiflood
 
-/setflood <number/off>  
-→ Set flood message limit
-
-/floodmode ban|mute|kick|tban|tmute  
-→ Set punishment mode
+➤ 𝖯𝗋𝖾𝗏𝖾𝗇𝗍𝗌 𝗌𝗉𝖺𝗆  
+➤ 𝖠𝗎𝗍𝗈 𝗆𝗎𝗍𝖾 𝖿𝗅𝗈𝗈𝖽𝖾𝗋𝗌
 """
