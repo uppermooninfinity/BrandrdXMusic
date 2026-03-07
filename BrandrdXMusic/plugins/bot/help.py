@@ -153,7 +153,17 @@ async def help_management(client, query: CallbackQuery):
                 InlineKeyboardButton(_["H_B_24"], callback_data="help_callback hb24"),
             ],
             [
-                InlineKeyboardButton(_["H_B_28"], callback_data="help_callback hb28"),
+                InlineKeyboardButton("Tᴀɢ-Aʟʟ", callback_data="mplus HELP_TagAll"),
+                InlineKeyboardButton("Iɴꜰᴏ", callback_data="mplus HELP_Info"),
+                InlineKeyboardButton("Exᴛʀᴀ", callback_data="mplus HELP_Extra"),
+            ],
+            [
+                InlineKeyboardButton("ғᴏɴᴛ", callback_data="mplus HELP_Font"),
+                InlineKeyboardButton("Bᴏᴛs", callback_data="mplus HELP_Bots"),
+                InlineKeyboardButton("Ⓣ-ɢʀᴀᴘʜ", callback_data="mplus HELP_TG"),
+            ],
+            [
+                InlineKeyboardButton(_["H_B_28"], callback_data="help_callback hb19"),
             ],
             [
                 InlineKeyboardButton(_["BACK_BUTTON"], callback_data="back_to_main"),
@@ -190,6 +200,11 @@ async def help_videochat(client, query: CallbackQuery):
                 InlineKeyboardButton(_["H_B_15"], callback_data="help_callback hb15"),
             ],
             [
+                InlineKeyboardButton("ᴛᴛs", callback_data="mplus HELP_TTS"),
+                InlineKeyboardButton("Rᴀᴅɪᴏ", callback_data="mplus HELP_Radio"),
+                InlineKeyboardButton("ǫᴜᴏᴛʟʏ", callback_data="mplus HELP_Q"),
+            ],
+            [
                 InlineKeyboardButton(_["BACK_BUTTON"], callback_data="back_to_main")
             ]
         ]
@@ -221,8 +236,23 @@ async def help_fun(client, query: CallbackQuery):
             [
                 InlineKeyboardButton(_["H_B_25"], callback_data="help_callback hb25"),
                 InlineKeyboardButton(_["H_B_27"], callback_data="help_callback hb27"),
-                InlineKeyboardButton("✨ ғsᴜʙ", callback_data="help_callback hb20"),
-                InlineKeyboardButton("🎮 ғᴜɴ ɢᴀᴍᴇ", callback_data="help_callback hb26"),
+                InlineKeyboardButton("ғsᴜʙ", callback_data="help_callback hb20"),
+                InlineKeyboardButton("ғᴜɴ ɢᴀᴍᴇ", callback_data="help_callback hb21"),
+            ],
+            [
+                InlineKeyboardButton("CʜᴀᴛGPT", callback_data="mplus HELP_ChatGPT"),
+                InlineKeyboardButton("Hɪsᴛᴏʀʏ", callback_data="mplus HELP_History"),
+                InlineKeyboardButton("Rᴇᴇʟ", callback_data="mplus HELP_Reel"),
+            ],
+            [
+                InlineKeyboardButton("ᴄᴏᴜᴘʟᴇꜱ", callback_data="mplus HELP_Couples"),
+                InlineKeyboardButton("Aᴄᴛɪᴏɴ", callback_data="mplus HELP_Action"),
+                InlineKeyboardButton("Sᴇᴀʀᴄʜ", callback_data="mplus HELP_Search"),
+            ],
+            [
+                InlineKeyboardButton("Sᴏᴜʀᴄᴇ", callback_data="mplus HELP_Source"),
+                InlineKeyboardButton("Tʀᴜᴛʜ-ᗪᴀʀᴇ", callback_data="mplus HELP_TD"),
+                InlineKeyboardButton("Qᴜɪᴢ", callback_data="mplus HELP_Quiz"),
             ],
             [
                 InlineKeyboardButton(_["BACK_BUTTON"], callback_data="back_to_main"),
@@ -290,7 +320,7 @@ async def help_clone(client, query: CallbackQuery):
                 InlineKeyboardButton("❌ ʀᴇᴍᴏᴠᴇ ᴄʟᴏɴᴇ", callback_data="remove_clone")
             ],
             [
-                InlineKeyboardButton("🔙 ʙᴀᴄᴋ", callback_data="back_help")
+                InlineKeyboardButton("🔙 ʙᴀᴄᴋ", callback_data="back_to_main")
             ],
         ]
     )
