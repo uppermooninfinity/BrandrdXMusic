@@ -10,7 +10,7 @@ from pyrogram.errors.exceptions.forbidden_403 import ChatWriteForbidden
 from BrandrdXMusic import app
 from config import LOGGER_ID, DEBUG_IGNORE_LOG
 from BrandrdXMusic.utils.exceptions import is_ignored_error
-from BrandrdXMusic.utils.pastebin import INFIBIN
+from BrandrdXMusic.utils.pastebin import HottyBin
 
 
 DEBUG_LOG_FILE = "ignored_errors.log"
@@ -20,7 +20,7 @@ DEBUG_LOG_FILE = "ignored_errors.log"
 
 async def send_large_error(text: str, caption: str, filename: str):
     try:
-        paste_url = await INFIBIN(text)
+        paste_url = await HottyBin(text)
         if paste_url:
             await app.send_message(LOGGER_ID, f"{caption}\n\n🔗 Paste: {paste_url}")
             return
