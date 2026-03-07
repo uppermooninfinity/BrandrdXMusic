@@ -129,47 +129,95 @@ async def on_back_button(client, CallbackQuery):
             _["help_1"].format(SUPPORT_CHAT), reply_markup=keyboard
         )
 
-@app.on_callback_query(filters.regex("^help_category") & ~BANNED_USERS)
-async def help_category_handler(client, query: CallbackQuery):
+# ==============================
+# MAIN HELP CATEGORY HANDLERS
+# ==============================
 
-    data = query.data.split()[1]
-    _ = get_string(query.message.chat.id)
+@app.on_callback_query(filters.regex("^HELP_MANAGEMENT$") & ~BANNED_USERS)
+async def help_management(client, query: CallbackQuery):
 
-    if data == "videochat":
-        await query.message.edit_text(
-            "• ᴠɪᴅєσᴄʜᴧᴛ •",
-            reply_markup=videochat_panel(_),
-        )
+    keyboard = help_back_markup({})
+    await query.message.edit_text(
+        "• ϻᴧηᴧɢєϻєηᴛ •\n\n"
+        "✦ ᴀᴅᴍɪɴ ᴄᴏᴍᴍᴀɴᴅs\n"
+        "✦ ɢʀᴏᴜᴘ ᴍᴀɴᴀɢᴇᴍᴇɴᴛ\n"
+        "✦ ᴍᴏᴅᴇʀᴀᴛɪᴏɴ sʏsᴛᴇᴍ\n\n"
+        "Manage your groups easily with these commands.",
+        reply_markup=keyboard
+    )
 
-    elif data == "fun":
-        await query.message.edit_text(
-            "• ꜰᴜη •",
-            reply_markup=fun_panel(_),
-        )
 
-    elif data == "moderation":
-        await query.message.edit_text(
-            "• ϻᴧηᴧɢєϻєηᴛ • ",
-            reply_markup=moderation_panel(_),
-        )
+@app.on_callback_query(filters.regex("^HELP_VIDEOCHAT$") & ~BANNED_USERS)
+async def help_videochat(client, query: CallbackQuery):
 
-    elif data == "sudoers":
-        await query.message.edit_text(
-            " • ꜱᴜᴅσєʀꜱ σηʟʏ •",
-            reply_markup=sudoers_panel(_),
-        )
+    keyboard = help_back_markup({})
+    await query.message.edit_text(
+        "• ᴠɪᴅєσᴄʜᴧᴛ •\n\n"
+        "✦ ᴘʟᴀʏ ᴍᴜsɪᴄ\n"
+        "✦ ᴠɪᴅᴇᴏ sᴛʀᴇᴀᴍ\n"
+        "✦ ᴠᴄ ᴄᴏɴᴛʀᴏʟ\n\n"
+        "Stream music & video inside voice chats.",
+        reply_markup=keyboard
+    )
+
+
+@app.on_callback_query(filters.regex("^HELP_FUN$") & ~BANNED_USERS)
+async def help_fun(client, query: CallbackQuery):
+
+    keyboard = help_back_markup({})
+    await query.message.edit_text(
+        "• ꜰᴜη •\n\n"
+        "✦ ᴇɴᴛᴇʀᴛᴀɪɴᴍᴇɴᴛ ᴄᴏᴍᴍᴀɴᴅs\n"
+        "✦ ɢʀᴏᴜᴘ ғᴜη\n"
+        "✦ ʀᴀɴᴅᴏᴍ ғᴜη ᴛᴏᴏʟs\n\n"
+        "Enjoy fun commands with your friends.",
+        reply_markup=keyboard
+    )
+
+
+@app.on_callback_query(filters.regex("^HELP_SUDOERS$") & ~BANNED_USERS)
+async def help_sudoers(client, query: CallbackQuery):
+
+    keyboard = help_back_markup({})
+    await query.message.edit_text(
+        "• ꜱᴜᴅσєʀꜱ •\n\n"
+        "✦ ᴏᴡɴᴇʀ ᴄᴏᴍᴍᴀɴᴅs\n"
+        "✦ ʙᴏᴛ ᴄᴏɴᴛʀᴏʟ\n"
+        "✦ sʏsᴛᴇᴍ ᴍᴀɴᴀɢᴇᴍᴇɴᴛ\n\n"
+        "These commands are restricted to bot sudo users.",
+        reply_markup=keyboard
+    )
+
+
+@app.on_callback_query(filters.regex("^clone_manager$") & ~BANNED_USERS)
+async def help_clone(client, query: CallbackQuery):
+
+    keyboard = help_back_markup({})
+    await query.message.edit_text(
+        "• ᴄʟᴏɴᴇ ϻᴧηᴧɢєϻєηᴛ •\n\n"
+        "✦ ᴄʀᴇᴀᴛᴇ ʙᴏᴛ ᴄʟᴏɴᴇ\n"
+        "✦ sᴇᴇ ᴄʟᴏɴᴇᴅ ʙᴏᴛs\n"
+        "✦ ʀᴇᴍᴏᴠᴇ ᴄʟᴏɴᴇ\n\n"
+        "Commands:\n"
+        "`/clone BOT_TOKEN`\n"
+        "`/mybots`\n"
+        "`/rmclone BOT_ID`",
+        reply_markup=keyboard
+    )
+
 
 
 @app.on_callback_query(filters.regex("^back_to_main$") & ~BANNED_USERS)
 async def back_to_main_handler(client, query: CallbackQuery):
 
-    _ = get_string(query.message.chat.id)
+    language = await get_lang(query.message.chat.id)
+    _ = get_string(language)
 
     await query.message.edit_text(
         "Choose the category for which you wanna get help",
         reply_markup=help_pannel(_),
     )
-
+    
 @app.on_callback_query(filters.regex("mplus"))
 async def mb_plugin_button(client, CallbackQuery):
     callback_data = CallbackQuery.data.strip()
