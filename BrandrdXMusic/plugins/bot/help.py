@@ -234,7 +234,7 @@ async def help_fun(client, query: CallbackQuery):
                 InlineKeyboardButton(_["H_B_22"], callback_data="help_callback hb22"),
             ],
             [
-                InlineKeyboardButton(_["H_B_25"], callback_data="help_callback hb25"),
+                InlineKeyboardButton(_["H_B_25"], callback_data="help_callback hb16"),
                 InlineKeyboardButton(_["H_B_27"], callback_data="help_callback hb27"),
                 InlineKeyboardButton("ғsᴜʙ", callback_data="help_callback hb20"),
                 InlineKeyboardButton("ғᴜɴ ɢᴀᴍᴇ", callback_data="help_callback hb21"),
