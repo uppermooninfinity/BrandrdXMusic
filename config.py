@@ -11,6 +11,7 @@ load_dotenv()
 # Get this value from my.telegram.org/apps
 API_ID = int(os.getenv("API_ID", ""))
 API_HASH = os.getenv("API_HASH", "")
+COMMAND_PREFIXES = list(os.getenv("COMMAND_PREFIXES", "/ ! . # $ % & ?").split())
 
 # Get your token from @BotFather on Telegram.
 BOT_TOKEN = os.getenv("BOT_TOKEN","")
