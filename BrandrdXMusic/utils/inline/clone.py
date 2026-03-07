@@ -46,11 +46,9 @@ def clone_manager_panel():
 async def clone_manager_handler(client, callback_query):
 
     text = (
-        "🤖 **ᴄʟᴏɴᴇ ϻᴧηᴧɢєϻєηᴛ**\n\n"
+        "<blockquote>🤖 **ᴄʟᴏɴᴇ ϻᴧηᴧɢєϻєηᴛ**\n\n"
         "Manage your cloned bots easily.\n\n"
-        "• Create new clone\n"
-        "• View cloned bots\n"
-        "• Remove clone bot"
+        "• Create new clone via command /clone",
     )
 
     await callback_query.message.edit_text(
@@ -72,8 +70,7 @@ async def clone_create_handler(client, callback_query):
 
     await callback_query.message.edit_text(
         "🤖 **Clone Bot**\n\n"
-        "Use this command to create a clone:\n\n"
-        "`/clone BOT_TOKEN`",
+        "Use this command /cloned to see your created cloned bots:",
         reply_markup=clone_manager_panel()
     )
 
@@ -86,7 +83,7 @@ async def clone_list_handler(client, callback_query):
     await callback_query.message.edit_text(
         "📜 **Your Cloned Bots**\n\n"
         "Use this command:\n\n"
-        "`/mybots`",
+        "`/cloned`",
         reply_markup=clone_manager_panel()
     )
 
@@ -99,6 +96,6 @@ async def clone_delete_handler(client, callback_query):
     await callback_query.message.edit_text(
         "❌ **Remove Clone Bot**\n\n"
         "Use this command:\n\n"
-        "`/delclone @botusername`",
+        "`/rmbot @botusername`",
         reply_markup=clone_manager_panel()
     )
