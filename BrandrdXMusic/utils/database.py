@@ -35,7 +35,8 @@ nsfwpackdb = mongodb.NSFW_PACKS
 nsfwstatusdb = mongodb.NSFW_STATUS
 antichanneldb = mongodb.antichannel
 antiflooddb = mongodb.antiflood
-
+imposter_chats = mongodb.imposter_chats
+imposter_users = mongodb.imposter_users
 # Shifting to memory [mongo sucks often]
 active = []
 activevideo = []
@@ -1156,3 +1157,75 @@ async def get_flood_action_duration(chat_id):
         return data["action_duration"]
 
     return 86400
+
+async def is_imposter_enabled(chat_id: int):
+    chat = await imposter_chats.find_one({"chat_id": chat_id})
+    return bool(chat)
+
+
+# Enable imposter in chat
+async def enable_imposter(chat_id: int, title: str, username: str):
+    await imposter_chats.update_one(
+        {"chat_id": chat_id},
+        {
+            "$set": {
+                "chat_id": chat_id,
+                "title": title,
+                "username": username
+            }
+        },
+        upsert=True
+    )
+
+
+# Disable imposter in chat
+async def disable_imposter(chat_id: int):
+    await imposter_chats.delete_one({"chat_id": chat_id})
+
+
+# Save user data or check for profile changes
+async def save_or_check_user(user):
+    user_id = user.id
+    username = user.username
+    first_name = user.first_name
+    last_name = user.last_name
+
+    existing = await imposter_users.find_one({"user_id": user_id})
+
+    # If user not saved yet
+    if not existing:
+        await imposter_users.insert_one(
+            {
+                "user_id": user_id,
+                "username": username,
+                "first_name": first_name,
+                "last_name": last_name,
+            }
+        )
+        return []
+
+    changes = []
+
+    if existing.get("username") != username:
+        changes.append(("username", existing.get("username"), username))
+
+    if existing.get("first_name") != first_name:
+        changes.append(("first_name", existing.get("first_name"), first_name))
+
+    if existing.get("last_name") != last_name:
+        changes.append(("last_name", existing.get("last_name"), last_name))
+
+    # Update database if changes detected
+    if changes:
+        await imposter_users.update_one(
+            {"user_id": user_id},
+            {
+                "$set": {
+                    "username": username,
+                    "first_name": first_name,
+                    "last_name": last_name,
+                }
+            }
+        )
+
+    return changes
