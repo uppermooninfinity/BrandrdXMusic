@@ -35,6 +35,7 @@ nsfwpackdb = mongodb.NSFW_PACKS
 nsfwstatusdb = mongodb.NSFW_STATUS
 antichanneldb = mongodb.antichannel
 antiflooddb = mongodb.antiflood
+imposterdb = mongodb.imposter
 imposter_chats = mongodb.imposter_chats
 imposter_users = mongodb.imposter_users
 # Shifting to memory [mongo sucks often]
@@ -1229,3 +1230,46 @@ async def save_or_check_user(user):
         )
 
     return changes
+
+async def enable_antiflood(chat_id: int):
+    await antiflooddb.update_one(
+        {"chat_id": chat_id},
+        {"$set": {"chat_id": chat_id}},
+        upsert=True
+    )
+
+
+async def disable_antiflood(chat_id: int):
+    await antiflooddb.delete_one({"chat_id": chat_id})
+
+
+async def is_antiflood_enabled(chat_id: int):
+    data = await antiflooddb.find_one({"chat_id": chat_id})
+    return bool(data)
+
+
+# ─────────────────────────────
+# IMPOSTER
+# ─────────────────────────────
+
+async def enable_imposter(chat_id: int, title: str = None, username: str = None):
+    await imposterdb.update_one(
+        {"chat_id": chat_id},
+        {
+            "$set": {
+                "chat_id": chat_id,
+                "title": title,
+                "username": username
+            }
+        },
+        upsert=True
+    )
+
+
+async def disable_imposter(chat_id: int):
+    await imposterdb.delete_one({"chat_id": chat_id})
+
+
+async def is_imposter_enabled(chat_id: int):
+    data = await imposterdb.find_one({"chat_id": chat_id})
+    return bool(data)
