@@ -15,7 +15,9 @@ COMMAND_PREFIXES = list(os.getenv("COMMAND_PREFIXES", "/ ! . # $ % & ?").split()
 
 # Get your token from @BotFather on Telegram.
 BOT_TOKEN = os.getenv("BOT_TOKEN","")
-
+BOT_USERNAME = os.getenv("BOT_USERNAME", "flex_musicbot")
+BOT_NAME = os.getenv("BOT_NAME", "˹ ʀᴀɪᴅᴇɴ ✘ ɴᴇᴛᴡᴏʀᴋ ˼")
+ASSUSERNAME = getenv("ASSUSERNAME", "gx1")
 DEBUG_IGNORE_LOG = True
 # OpenAI Token
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
