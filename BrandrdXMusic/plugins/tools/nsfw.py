@@ -1,199 +1,216 @@
 import asyncio
 from pyrogram import filters
-from pyrogram.types import Message
-from pyrogram.enums import ChatMemberStatus
-
 from BrandrdXMusic import app
 from BrandrdXMusic.utils.database import (
-    enable_nsfw,
-    disable_nsfw,
-    is_nsfw_enabled,
-    add_nsfw_media,
-    remove_nsfw_media,
-    is_nsfw_media,
+    add_nsfw,
+    remove_nsfw,
+    is_nsfw,
     add_nsfw_pack,
     remove_nsfw_pack,
     is_nsfw_pack,
-    nsfw_stats
+    set_nsfw_status,
+    get_nsfw_status,
+    get_all_nsfw
 )
 
-# ================= CONFIG ================= #
-
-NSFW_LOGS = -1001234567890  # change to your log channel
+NSFW_LOGS = -1003700186680  # put your log channel id
 
 
-# ================= ADMIN CHECK ================= #
+# ─────────────────────────────
+# NSFW TOGGLE
+# ─────────────────────────────
 
-async def is_admin(chat_id, user_id):
-    member = await app.get_chat_member(chat_id, user_id)
-    return member.status in (
-        ChatMemberStatus.ADMINISTRATOR,
-        ChatMemberStatus.OWNER
-    )
+@app.on_message(filters.command("antinsfw") & filters.group)
+async def toggle_nsfw(_, message):
 
+    if not message.from_user:
+        return
 
-# ================= ENABLE / DISABLE ================= #
-
-@app.on_message(filters.command("antinsfw", prefixes=["/"]) & filters.group)
-async def toggle_nsfw(_, message: Message):
-
-    if not await is_admin(message.chat.id, message.from_user.id):
-        return await message.reply("admins only.")
+    member = await app.get_chat_member(message.chat.id, message.from_user.id)
+    if not member.privileges or not member.privileges.can_delete_messages:
+        return
 
     if len(message.command) < 2:
-        return await message.reply("/antinsfw on | off")
+        return await message.reply("Usage: `/antinsfw on|off`")
 
-    state = message.command[1].lower()
+    arg = message.command[1].lower()
 
-    if state == "on":
-        await enable_nsfw(message.chat.id)
-        await message.reply("nsfw protection enabled.")
+    if arg == "on":
+        await set_nsfw_status(message.chat.id, True)
+        await message.reply("✅ **NSFW Protection Enabled**")
 
-    elif state == "off":
-        await disable_nsfw(message.chat.id)
-        await message.reply("nsfw protection disabled.")
+    elif arg == "off":
+        await set_nsfw_status(message.chat.id, False)
+        await message.reply("❌ **NSFW Protection Disabled**")
 
 
-# ================= MARK MEDIA ================= #
+# ─────────────────────────────
+# MARK MEDIA NSFW
+# ─────────────────────────────
 
-@app.on_message(filters.command("marknsfw", prefixes=["/"]) & filters.reply)
-async def mark_nsfw(_, message: Message):
+@app.on_message(filters.command("marknsfw") & filters.reply)
+async def mark_nsfw(_, message):
 
     if message.from_user.id not in app.owner_ids:
         return
 
     media = message.reply_to_message
 
-    file_id = (
-        media.photo.file_unique_id if media.photo else
-        media.video.file_unique_id if media.video else
-        media.sticker.file_unique_id if media.sticker else None
-    )
+    file_id = None
+
+    if media.photo:
+        file_id = media.photo.file_id
+
+    elif media.video:
+        file_id = media.video.file_id
+
+    elif media.sticker:
+        file_id = media.sticker.file_id
 
     if not file_id:
-        return await message.reply("reply to photo/video/sticker.")
+        return await message.reply("Reply to image/video/sticker")
 
-    await add_nsfw_media(file_id)
+    await add_nsfw(file_id)
 
-    await message.reply("media marked nsfw.")
+    await message.reply("🚫 **Marked as NSFW globally**")
 
 
-# ================= MARK STICKER PACK ================= #
+# ─────────────────────────────
+# MARK STICKER PACK
+# ─────────────────────────────
 
-@app.on_message(filters.command("marksticknsfw", prefixes=["/"]) & filters.reply)
-async def mark_pack(_, message: Message):
+@app.on_message(filters.command("marksticknsfw") & filters.reply)
+async def mark_pack(_, message):
 
     if message.from_user.id not in app.owner_ids:
         return
 
     if not message.reply_to_message.sticker:
-        return await message.reply("reply to sticker.")
+        return await message.reply("Reply to a sticker")
 
     pack = message.reply_to_message.sticker.set_name
 
     await add_nsfw_pack(pack)
 
-    await message.reply("sticker pack blocked.")
+    await message.reply("🚫 **Sticker pack blocked globally**")
 
 
-# ================= REMOVE NSFW ================= #
+# ─────────────────────────────
+# REMOVE NSFW
+# ─────────────────────────────
 
-@app.on_message(filters.command("remark", prefixes=["/"]) & filters.reply)
-async def remark(_, message: Message):
+@app.on_message(filters.command("remark") & filters.reply)
+async def remark(_, message):
 
     if message.from_user.id not in app.owner_ids:
         return
 
     media = message.reply_to_message
 
-    file_id = (
-        media.photo.file_unique_id if media.photo else
-        media.video.file_unique_id if media.video else
-        media.sticker.file_unique_id if media.sticker else None
-    )
+    file_id = None
+
+    if media.photo:
+        file_id = media.photo.file_id
+
+    elif media.video:
+        file_id = media.video.file_id
+
+    elif media.sticker:
+        file_id = media.sticker.file_id
 
     if not file_id:
+        return await message.reply("Reply to NSFW media")
+
+    await remove_nsfw(file_id)
+
+    await message.reply("✅ **Removed from NSFW database**")
+
+
+# ─────────────────────────────
+# NSFW SCAN
+# ─────────────────────────────
+
+@app.on_message(filters.command("nsfwscan") & filters.group)
+async def scan(_, message):
+
+    if message.from_user.id not in app.owner_ids:
         return
 
-    await remove_nsfw_media(file_id)
+    data = await get_all_nsfw()
 
-    if media.sticker:
-        await remove_nsfw_pack(media.sticker.set_name)
+    total = len(data)
 
-    await message.reply("nsfw removed.")
+    await message.reply(
+        f"""
+**NSFW DATABASE STATS**
 
+🚫 Marked Media : `{total}`
 
-# ================= DATABASE SCAN ================= #
-
-@app.on_message(filters.command("nsfwscan", prefixes=["/"]))
-async def scan(_, message: Message):
-
-    media, packs = await nsfw_stats()
-
-    text = (
-        "nsfw database\n\n"
-        f"blocked media : {media}\n"
-        f"blocked packs : {packs}"
+System Status : **Active**
+Protection : **Enabled**
+"""
     )
 
-    await message.reply(text)
 
-
-# ================= DETECT NSFW ================= #
+# ─────────────────────────────
+# AUTO NSFW DELETE
+# ─────────────────────────────
 
 @app.on_message(filters.group & (filters.photo | filters.video | filters.sticker))
-async def detect(_, message: Message):
+async def detect_nsfw(_, message):
 
-    enabled = await is_nsfw_enabled(message.chat.id)
+    status = await get_nsfw_status(message.chat.id)
 
-    if not enabled:
+    if not status:
         return
 
-    file_id = (
-        message.photo.file_unique_id if message.photo else
-        message.video.file_unique_id if message.video else
-        message.sticker.file_unique_id if message.sticker else None
-    )
+    file_id = None
+    pack = None
 
-    pack = message.sticker.set_name if message.sticker else None
+    if message.photo:
+        file_id = message.photo.file_id
 
-    if not file_id:
-        return
+    elif message.video:
+        file_id = message.video.file_id
 
-    media_match = await is_nsfw_media(file_id)
-    pack_match = await is_nsfw_pack(pack) if pack else False
+    elif message.sticker:
+        file_id = message.sticker.file_id
+        pack = message.sticker.set_name
 
-    if not media_match and not pack_match:
-        return
+    if file_id and await is_nsfw(file_id):
 
-    try:
         await message.delete()
-    except:
-        return
 
-    warn = await message.reply(
-        f"{message.from_user.mention} nsfw content blocked."
-    )
-
-    await asyncio.sleep(4)
-
-    try:
-        await warn.delete()
-    except:
-        pass
-
-    # ================= LOG ================= #
-
-    try:
-
-        log_text = (
-            "nsfw blocked\n\n"
-            f"chat : {message.chat.title}\n"
-            f"user : {message.from_user.mention}\n"
-            f"id : `{message.from_user.id}`"
+        warn = await message.reply(
+            "**ᴄᴏɴᴛᴇɴᴛ ᴅᴇʟᴇᴛᴇᴅ ⚠️**\n\n"
+            "> **ᴀᴅᴜʟᴛ / ɴsғᴡ ᴍᴇᴅɪᴀ ɪs ɴᴏᴛ ᴀʟʟᴏᴡᴇᴅ**\n"
+            "> **ɢʀᴏᴜᴘ sᴇᴄᴜʀɪᴛʏ ᴘʀᴏᴛᴇᴄᴛɪᴏɴ ᴀᴄᴛɪᴠᴇ**"
         )
 
-        await app.send_message(NSFW_LOGS, log_text)
+        await asyncio.sleep(6)
+        await warn.delete()
 
-    except:
-        pass
+        await app.send_message(
+            NSFW_LOGS,
+            f"NSFW Deleted\nChat: {message.chat.title}\nUser: {message.from_user.id}"
+        )
+
+        return
+
+    if pack and await is_nsfw_pack(pack):
+
+        await message.delete()
+
+        warn = await message.reply(
+            "**ᴄᴏɴᴛᴇɴᴛ ᴅᴇʟᴇᴛᴇᴅ ⚠️**\n\n"
+            "> **ʙʟᴏᴄᴋᴇᴅ sᴛɪᴄᴋᴇʀ ᴘᴀᴄᴋ ᴅᴇᴛᴇᴄᴛᴇᴅ**\n"
+            "> **ɢʀᴏᴜᴘ ᴘʀᴏᴛᴇᴄᴛɪᴏɴ ᴀᴄᴛɪᴠᴇ**"
+        )
+
+        await asyncio.sleep(6)
+        await warn.delete()
+
+        await app.send_message(
+            NSFW_LOGS,
+            f"Sticker Pack Blocked\nChat: {message.chat.title}\nUser: {message.from_user.id}"
+        )
