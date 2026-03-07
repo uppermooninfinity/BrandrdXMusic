@@ -1074,3 +1074,17 @@ async def get_nsfw_status(chat_id: int):
 
     return data["status"]
 
+
+async def enable_antichannel(chat_id):
+    await antichanneldb.update_one(
+        {"chat_id": chat_id},
+        {"$set": {"enabled": True}},
+        upsert=True
+    )
+
+async def disable_antichannel(chat_id):
+    await antichanneldb.delete_one({"chat_id": chat_id})
+
+async def is_antichannel_enabled(chat_id):
+    data = await antichanneldb.find_one({"chat_id": chat_id})
+    return bool(data)
