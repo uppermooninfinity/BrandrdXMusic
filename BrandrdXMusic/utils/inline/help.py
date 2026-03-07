@@ -27,9 +27,12 @@ def help_pannel(_, START: Union[bool, int] = None):
                 InlineKeyboardButton(" • ꜰᴜη •", callback_data="HELP_FUN"),
             ],
             [
-                InlineKeyboardButton("• ϻᴧηᴧɢєϻєηᴛ •", callback_data="help_category moderation"),
-                InlineKeyboardButton("• ꜱᴜᴅσєʀꜱ σηʟʏ •", callback_data="help_category sudoers"),
+                InlineKeyboardButton("• ϻᴧηᴧɢєϻєηᴛ •", callback_data="HELP_MANAGEMENT"),
+                InlineKeyboardButton("• ꜱᴜᴅσєʀꜱ σηʟʏ •", callback_data="HELP_SUDOERS"),
             ],
+            [
+                InlineKeyboardButton("• ϻᴧηᴧɢєϻєηᴛ ᴄʟᴏηє •", callback_data="clone_manager")
+            ]
             *mark,
         ]
     )
