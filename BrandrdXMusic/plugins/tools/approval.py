@@ -3,11 +3,10 @@ from pyrogram import filters
 from pyrogram.types import (
     InlineKeyboardMarkup,
     InlineKeyboardButton,
-    ChatJoinRequest,
-    InputMediaPhoto
+    ChatJoinRequest
 )
-from pyrogram import enums
-from pyrogram.errors import FloodWait, RPCError
+from pyrogram.enums import ParseMode
+from pyrogram.errors import FloodWait
 
 from BrandrdXMusic import app
 
@@ -25,144 +24,146 @@ async def join_request_handler(client, request: ChatJoinRequest):
     user = request.from_user
     chat = request.chat
 
-    try:
-        username = f"@{user.username}" if user.username else "ɴ/ᴀ"
-        first_name = user.first_name or "ɴ/ᴀ"
-        last_name = user.last_name or "ɴ/ᴀ"
-        is_bot = user.is_bot
-        is_premium = getattr(user, "is_premium", False)
-
-        # Try getting profile photo
-        try:
-            photos = await client.get_profile_photos(user.id, limit=1)
-            user_photo = photos.photos[0][-1].file_id if photos.total > 0 else None
-            photos_count = photos.total
-        except:
-            user_photo = None
-            photos_count = 0
-
-    except:
-        username = first_name = last_name = "ɴ/ᴀ"
-        is_bot = False
-        is_premium = False
-        photos_count = 0
-        user_photo = None
+    username = f"@{user.username}" if user.username else "No Username"
 
     caption = (
-        f"❖ ηєᴡ ᴊσɪη ʀєǫᴜєꜱᴛ\n\n"
-        f"👤 ᴜꜱᴇʀ: {user.mention}\n"
-        f"🆔 ɪᴅ: <code>{user.id}</code>\n"
-        f"💬 ᴜsᴇʀɴᴀᴍᴇ: {username}\n"
-        f"📝 ғɪʀsᴛ: {first_name}\n"
-        f"📝 ʟᴀsᴛ: {last_name}\n"
-        f"🤖 ʙᴏᴛ: {is_bot}\n"
-        f"💎 ᴘʀᴇᴍɪᴜᴍ: {is_premium}\n"
-        f"📸 ᴘɪᴄs: {photos_count}\n"
-        f"🏷 ᴄʜᴀᴛ: {chat.title}\n\n"
-        f"❖ ᴄʜσσsᴇ ᴀɴ ᴀᴄᴛɪᴏɴ:"
+        f"✨ **New Join Request**\n\n"
+        f"👤 {user.mention}\n"
+        f"🆔 `{user.id}`\n"
+        f"💬 {username}\n"
+        f"🏷 {chat.title}\n\n"
+        f"Choose an action below."
     )
 
     buttons = InlineKeyboardMarkup(
         [
             [
                 InlineKeyboardButton(
-                    "✅ ᴀᴘᴘʀᴏᴠᴇ",
+                    "✅ Accept",
                     callback_data=f"approve|{chat.id}|{user.id}"
                 ),
                 InlineKeyboardButton(
-                    "❌ ᴅᴇᴄʟɪɴᴇ",
+                    "❌ Decline",
                     callback_data=f"decline|{chat.id}|{user.id}"
                 ),
             ],
             [
                 InlineKeyboardButton(
-                    "👀 ᴠɪᴇᴡ ᴘʀᴏғɪʟᴇ",
-                    url=f"tg://user?id={user.id}"
+                    "👤 View Profile",
+                    url=f"https://t.me/{user.username}" if user.username else f"tg://user?id={user.id}"
                 )
             ]
         ]
     )
 
-    try:
-        if user_photo:
-            await client.send_photo(
-                chat.id,
-                photo=user_photo,
-                caption=caption,
-                reply_markup=buttons,
-                parse_mode=enums.ParseMode.HTML
-            )
-        else:
-            await client.send_message(
-                chat.id,
-                caption,
-                reply_markup=buttons,
-                parse_mode=enums.ParseMode.HTML
-            )
-    except FloodWait as e:
-        await asyncio.sleep(e.value)
-
-
-# ===============================
-# APPROVE / DECLINE BUTTONS
-# ===============================
-
-@app.on_callback_query(filters.regex("^(approve|decline)\|"))
-async def join_request_buttons(client, callback):
+    photo = None
 
     try:
+        photos = await client.get_profile_photos(user.id, limit=1)
 
-        action, chat_id, user_id = callback.data.split("|")
-        chat_id = int(chat_id)
-        user_id = int(user_id)
-
-        if action == "approve":
-            await client.approve_chat_join_request(chat_id, user_id)
-            result_text = (
-                f"✅ ᴜꜱᴇʀ ᴀᴘᴘʀᴏᴠᴇᴅ\n\n"
-                f"🆔 <code>{user_id}</code>"
-            )
-        else:
-            await client.decline_chat_join_request(chat_id, user_id)
-            result_text = (
-                f"❌ ᴜꜱᴇʀ ᴅᴇᴄʟɪɴᴇᴅ\n\n"
-                f"🆔 <code>{user_id}</code>"
-            )
-
-        try:
-            if callback.message.photo:
-                await callback.message.edit_media(
-                    InputMediaPhoto(
-                        callback.message.photo.file_id,
-                        caption=result_text,
-                        parse_mode=enums.ParseMode.HTML
-                    )
-                )
-            else:
-                await callback.message.edit_text(
-                    result_text,
-                    parse_mode=enums.ParseMode.HTML
-                )
-        except:
-            pass
-
-        await callback.answer()
-
-        # LOG CHANNEL
-        await client.send_message(
-            LOG_CHANNEL_ID,
-            result_text,
-            reply_markup=InlineKeyboardMarkup(
-                [[InlineKeyboardButton("• ᴅᴇᴠᴇʟᴏᴘᴇʀ •", url=DEVELOPER_URL)]]
-            ),
-            parse_mode=enums.ParseMode.HTML
-        )
-
-    except FloodWait as e:
-        await asyncio.sleep(e.value)
-
-    except RPCError:
-        pass
+        if photos.total > 0:
+            photo = photos.photos[0][-1].file_id
 
     except Exception:
         pass
+
+    try:
+
+        if photo:
+
+            await client.send_photo(
+                LOG_CHANNEL_ID,
+                photo=photo,
+                caption=caption,
+                reply_markup=buttons,
+                parse_mode=ParseMode.MARKDOWN
+            )
+
+        else:
+
+            await client.send_message(
+                LOG_CHANNEL_ID,
+                caption,
+                reply_markup=buttons,
+                parse_mode=ParseMode.MARKDOWN
+            )
+
+    except FloodWait as e:
+        await asyncio.sleep(e.value)
+
+
+# ===============================
+# APPROVE / DECLINE HANDLER
+# ===============================
+
+@app.on_callback_query(filters.regex("^(approve|decline)\\|"))
+async def join_request_buttons(client, callback):
+
+    action, chat_id, user_id = callback.data.split("|")
+
+    chat_id = int(chat_id)
+    user_id = int(user_id)
+
+    admin = callback.from_user
+
+    try:
+
+        if action == "approve":
+
+            await client.approve_chat_join_request(chat_id, user_id)
+
+            text = (
+                f"🌟 **Request Approved**\n\n"
+                f"👤 User: `{user_id}`\n"
+                f"✅ Approved By: {admin.mention}\n\n"
+                f"User can now join the group."
+            )
+
+        else:
+
+            await client.decline_chat_join_request(chat_id, user_id)
+
+            text = (
+                f"🚫 **Request Declined**\n\n"
+                f"👤 User: `{user_id}`\n"
+                f"❌ Declined By: {admin.mention}"
+            )
+
+        try:
+            await callback.message.delete()
+        except:
+            pass
+
+        buttons = InlineKeyboardMarkup(
+            [
+                [
+                    InlineKeyboardButton(
+                        "👤 Open Profile",
+                        url=f"tg://user?id={user_id}"
+                    )
+                ],
+                [
+                    InlineKeyboardButton(
+                        "Developer",
+                        url=DEVELOPER_URL
+                    )
+                ]
+            ]
+        )
+
+        await client.send_message(
+            LOG_CHANNEL_ID,
+            text,
+            reply_markup=buttons,
+            parse_mode=ParseMode.MARKDOWN
+        )
+
+        await callback.answer("Action Completed")
+
+    except FloodWait as e:
+
+        await asyncio.sleep(e.value)
+
+    except Exception:
+
+        await callback.answer("Error occurred", show_alert=True)
