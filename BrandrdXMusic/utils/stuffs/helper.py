@@ -217,7 +217,7 @@ Qᴜɪᴢ
 
 ◌ /q r : ᴄʀᴇᴀᴛᴇ ᴀ ǫᴜᴏᴛᴇ ғʀᴏᴍ ᴛʜᴇ ᴍᴇssᴀɢᴇ ᴡɪᴛʜ ʀᴇᴘʟʏ
 """
-clone_bot = """
+    clone_bot = """
 <b><u>🤖 ᴄʟᴏɴᴇ ʙᴏᴛ</u></b>
 
 ʏᴏᴜ ᴄᴀɴ  ᴄʟᴏɴᴇ ʙᴏᴛ
@@ -225,7 +225,7 @@ clone_bot = """
 /clone (bot token from bot father):  to clone your own group management + waifu as fun and music bot
 """
 
-see_clones = """
+    see_clones = """
 <b><u>📜 sᴇᴇ ᴄʟᴏɴᴇᴅ</u></b>
 
 ʏᴏᴜ ᴄᴀɴ  see your cloned bots 
@@ -233,7 +233,7 @@ see_clones = """
 /cloned or /mybots :  to check your cloned bots
 """
 
-remove_clone = """
+    remove_clone = """
 <b><u>❌ ʀᴇᴍᴏᴠᴇ ᴄʟᴏɴᴇ</u></b>
 
 ʏᴏᴜ ᴄᴀɴ remove your ᴄʟᴏɴᴇ ʙᴏᴛ
