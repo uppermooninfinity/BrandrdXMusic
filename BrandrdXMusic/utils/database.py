@@ -34,7 +34,7 @@ nsfwdb = mongodb.NSFW_DATA
 nsfwpackdb = mongodb.NSFW_PACKS
 nsfwstatusdb = mongodb.NSFW_STATUS
 antichanneldb = mongodb.antichannel
-
+antiflooddb = mongodb.antiflood
 
 # Shifting to memory [mongo sucks often]
 active = []
@@ -1088,3 +1088,71 @@ async def disable_antichannel(chat_id):
 async def is_antichannel_enabled(chat_id):
     data = await antichanneldb.find_one({"chat_id": chat_id})
     return bool(data)
+
+async def get_antiflood_settings(chat_id):
+    data = await antiflooddb.find_one({"chat_id": chat_id})
+
+    if not data:
+        data = {
+            "chat_id": chat_id,
+            "flood_threshold": 5,
+            "flood_timer_count": 0,
+            "flood_timer_duration": 0,
+            "flood_action": "mute",
+            "delete_flood_messages": True,
+        }
+        await antiflooddb.insert_one(data)
+
+    return data
+
+
+async def set_flood_threshold(chat_id, threshold):
+    await antiflooddb.update_one(
+        {"chat_id": chat_id},
+        {"$set": {"flood_threshold": threshold}},
+        upsert=True
+    )
+
+
+async def set_flood_action(chat_id, action):
+    await antiflooddb.update_one(
+        {"chat_id": chat_id},
+        {"$set": {"flood_action": action}},
+        upsert=True
+    )
+
+
+async def set_delete_flood_messages(chat_id, status):
+    await antiflooddb.update_one(
+        {"chat_id": chat_id},
+        {"$set": {"delete_flood_messages": status}},
+        upsert=True
+    )
+
+
+async def set_flood_timer(chat_id, count, duration):
+    await antiflooddb.update_one(
+        {"chat_id": chat_id},
+        {"$set": {
+            "flood_timer_count": count,
+            "flood_timer_duration": duration
+        }},
+        upsert=True
+    )
+
+
+async def set_flood_action_duration(chat_id, duration):
+    await antiflooddb.update_one(
+        {"chat_id": chat_id},
+        {"$set": {"action_duration": duration}},
+        upsert=True
+    )
+
+
+async def get_flood_action_duration(chat_id):
+    data = await antiflooddb.find_one({"chat_id": chat_id})
+
+    if data and "action_duration" in data:
+        return data["action_duration"]
+
+    return 86400
